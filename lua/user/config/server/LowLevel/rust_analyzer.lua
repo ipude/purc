@@ -13,9 +13,11 @@
 -- end
 
 map("n", "<leader>cc", "<cmd>Cargo check<cr>", {desc = "Cargo check"})
-map("n", "<leader>cz", "<cmd>Cargo run<cr>", {desc = "Cargo check"})
-map("n", "<leader>cb", "<cmd>Cargo build<cr>", {desc = "Cargo check"})
-map("n", "<leader>cu", "<cmd>Cargo update<cr>", {desc = "Cargo check"})
+map("n", "<leader>cC", "<cmd>Cargo clean<cr>", {desc = "Cargo clean"})
+map("n", "<leader>cz", "<cmd>Cargo run<cr>", {desc = "Cargo run"})
+map("n", "<leader>cb", "<cmd>Cargo build<cr>", {desc = "Cargo build"})
+map("n", "<leader>cu", "<cmd>Cargo update<cr>", {desc = "Cargo update"})
+map("n", "<leader>cr", "<cmd>LspCargoReload<cr>", {desc = "Cargo Lsp Reload"})
 
 -- SILENCE ALL LSP LOGS (nuclear option for Termux)
 vim.lsp.set_log_level('OFF')  -- Was 'DEBUG', now completely silent
