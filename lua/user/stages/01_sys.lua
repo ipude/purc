@@ -4,7 +4,7 @@ require('user.sys.options')
 require('user.mini.mini_notify')
 require('user.sys.env')
 -- require('user.sys.mason')
-require('user.sys.copy_to_sys')
+require('user.sys.paste_from_sys')
 --
 -- Inbuilt features
 require('user.sys.inbuilt.last_pos')

@@ -1,4 +1,3 @@
-require('user.config.tools.blink')
 require('user.config.tools.lsp')
 -- HighLevel Languages
 require('user.config.server.HighLevel.lua_ls')

@@ -1,4 +1,4 @@
-require('user.load_first');
+require('user.load_first')
 -- =========================================================
 -- 1. Safe require helper
 -- =========================================================
@@ -53,4 +53,4 @@ load_stages()
 -- =========================================================
 -- 3. Post-init
 -- =========================================================
-vim.cmd.colorscheme('tokyonight-storm')
+vim.cmd.colorscheme('tokyonight-moon')

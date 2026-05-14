@@ -1,23 +1,4 @@
--- Leader set to space 
-vim.g.mapleader = " "
-vim.g.maplocalleader = "'" -- Local leader
-_G.map = vim.keymap.set
--- UI & Display
-vim.o.number = true
-vim.o.relativenumber = true
-vim.o.cursorline = true
-vim.o.termguicolors = true
-vim.o.signcolumn = "yes"
-vim.o.showtabline = 2
-vim.o.scrolloff = 8
-vim.o.sidescrolloff = 8
-vim.opt.fillchars:append({ eob = ' ' })
--- require("user.profiler")
-vim.g.loaded_python_provider = 0
-vim.g.loaded_ruby_provider = 0
-vim.g.loaded_perl_provider = 0
-vim.lsp.set_log_level('warn')
-
+require('user.load_first');
 -- =========================================================
 -- 1. Safe require helper
 -- =========================================================
@@ -73,4 +54,3 @@ load_stages()
 -- 3. Post-init
 -- =========================================================
 vim.cmd.colorscheme('tokyonight-night')
--- 
