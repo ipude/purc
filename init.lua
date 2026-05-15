@@ -1,3 +1,4 @@
+-- require("user.profiler")
 require('user.load_first')
 -- =========================================================
 -- 1. Safe require helper
