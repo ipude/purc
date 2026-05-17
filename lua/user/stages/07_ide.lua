@@ -13,11 +13,3 @@ vim.schedule(function()
     require('user.config.ide.ide.sessions')
     require('user.config.ide.ide.toggleterm')
 end)
-
--- user/config/ide/ide/comments.lua
-vim.api.nvim_create_autocmd('BufReadPost', {
-    once = true,
-    callback = function()
-        require('Comment').setup()
-    end,
-})

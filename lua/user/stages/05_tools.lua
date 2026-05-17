@@ -12,7 +12,6 @@ vim.api.nvim_create_autocmd('LspAttach', {
         -- Guard so setup only runs once but applies to all buffers
         if not vim.g.lsp_tools_loaded then
             vim.g.lsp_tools_loaded = true
-            require('user.config.tools.lspkind')
             require('user.config.tools.navic')
         end
 

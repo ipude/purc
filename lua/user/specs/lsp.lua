@@ -22,16 +22,6 @@ return {
         },
     },
     {
-        'rmagatti/goto-preview',
---         commit = 'd2d6923',
-        event = 'LspAttach',
-        dependencies = {
-            'rmagatti/logger.nvim',
---             commit = '63dd10c',
-        },
-        config = true,
-    },
-    {
         'folke/trouble.nvim',
 --         commit = 'bd67efe',
         opts = {}, -- for default options, refer to the configuration section for custom setup.
