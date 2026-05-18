@@ -1,2 +1,2 @@
 # arch-nvim
-arch-nvim : Personal Config for Rust
+The Neovim Setup that just works.
