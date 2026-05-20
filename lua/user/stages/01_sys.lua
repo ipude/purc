@@ -18,6 +18,6 @@ require('user.sys.paste_from_sys') -- clipboard, not needed until first paste
 vim.schedule(function()
     require('user.mini.mini_notify')   -- notifications, not needed until first notify
   require('user.sys.last_pos')       -- last position, fires on BufReadPost anyway
-  require('user.sys.options')       -- last position, fires on BufReadPost anyway
+  -- require('user.sys.options')       -- last position, fires on BufReadPost anyway
 end)
 -- =======================================================================================
