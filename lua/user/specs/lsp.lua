@@ -6,13 +6,13 @@ return {
         'onsails/lspkind-nvim',
         lazy = true,
     },
-    {
-        'SmiteshP/nvim-navic',
-        lazy = true,
-        dependencies = {
-            'neovim/nvim-lspconfig',
-        },
-    },
+    -- {
+    --     'SmiteshP/nvim-navic',
+    --     lazy = true,
+    --     dependencies = {
+    --         'neovim/nvim-lspconfig',
+    --     },
+    -- },
     {
         'folke/trouble.nvim',
         opts = {},
