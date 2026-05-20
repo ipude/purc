@@ -16,6 +16,7 @@
   "mini.indentscope": { "branch": "main", "commit": "ace9b4e503cb095b9a3f6442c909d117c4aa8d0e" },
   "mini.move": { "branch": "main", "commit": "a776027e68fe763987a0132d59877d651a7c0130" },
   "mini.notify": { "branch": "main", "commit": "ef35a3ec68399398f097d0c1736c343a45cb7406" },
+  "noice.nvim": { "branch": "main", "commit": "7bfd942445fb63089b59f97ca487d605e715f155" },
   "nui.nvim": { "branch": "main", "commit": "de740991c12411b663994b2860f1a4fd0937c130" },
   "nvim-autopairs": { "branch": "master", "commit": "7b9923abad60b903ece7c52940e1321d39eccc79" },
   "nvim-cokeline": { "branch": "main", "commit": "9fbed130683b7b6f73198c09e35ba4b33f547c08" },

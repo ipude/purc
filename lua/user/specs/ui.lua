@@ -1,12 +1,10 @@
 return {
     {
         'willothy/nvim-cokeline',
-        --         commit = '9fbed13',
     },
     {
         'stevearc/dressing.nvim',
-        --         commit = '3a45525',
-        lazy = true, -- loaded via vim.ui hijack above
+        lazy = true,
         opts = {
             input = {
                 enabled        = true,
@@ -53,6 +51,7 @@ return {
                 },
             },
         },
+
     },
     {
         'rcarriga/nvim-notify',
@@ -110,5 +109,41 @@ return {
         end
     },
 
-    vim.keymap.set("n", '<leader>loi', '<cmd>Lazy load indent-blankline.nvim<cr>')
+    {
+        'folke/noice.nvim',
+        event = 'VeryLazy',
+        dependencies = {
+            'MunifTanjim/nui.nvim',
+        },
+        init = function()
+            -- Prevent noice from ever overriding vim.notify
+            vim.g.noice_notify_enabled = false
+        end,
+        opts = {
+            messages = {
+                enabled = false, -- hands ALL cmdline messages back to neovim default / mini.notify
+            },
+            notify = { enabled = false },
+            lsp = {
+                progress = { enabled = false },
+                hover = { enabled = true },
+                message = { enabled = false },
+                override = {
+                    ['vim.lsp.util.convert_input_to_markdown_lines'] = true,
+                    ['vim.lsp.util.stylize_markdown'] = true,
+                    ['cmp.entry.get_documentation'] = true,
+                },
+            },
+            presets = {
+                bottom_search = false,
+                command_palette = true,
+                long_message_to_split = true,
+                inc_rename = false,
+            },
+            stages = "static",
+        },
+    },
+
+    vim.keymap.set("n", '<leader>ri', '<cmd>Lazy load indent-blankline.nvim<cr>'),
+    vim.keymap.set("n", '<leader>rd', '<cmd>Lazy load dressing.nvim<cr>'),
 }

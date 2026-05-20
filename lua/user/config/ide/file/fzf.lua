@@ -134,3 +134,52 @@ k('n', '<leader>gir', function() fzf().live_grep({ cwd = sys_root(), prompt = "G
 k('n', '<leader>Gc', function() fzf().git_commits() end, { desc = 'Git commits' })
 
 k('n', '<leader>Gs', function() fzf().git_status() end, { desc = 'Git status' })
+
+
+
+
+
+
+
+-- In your keymaps file
+
+local function fzf_in_custom_dir(mode)
+  mode = mode or "files"
+
+  -- Floating input prompt
+  vim.ui.input({
+    prompt = " Dir: ",
+    default = vim.fn.getcwd(),
+    completion = "dir",   -- <Tab> completes directory names
+  }, function(input)
+    if not input or input == "" then return end
+
+    -- Expand ~, $ENV_VAR, shell globs
+    local path = vim.fn.expand(input)
+
+    -- Also resolve env vars the expand() may have missed
+    path = path:gsub("%$(%w+)", function(var)
+      return os.getenv(var) or ("$" .. var)
+    end)
+
+    if vim.fn.isdirectory(path) == 0 then
+      vim.notify("Not a directory: " .. path, vim.log.levels.ERROR)
+      return
+    end
+
+    if mode == "files" then
+      require("fzf-lua").files({ cwd = path })
+    elseif mode == "grep" then
+      require("fzf-lua").live_grep({ cwd = path })
+    elseif mode == "explorer" then
+      require("fzf-lua").file_browser({ cwd = path })
+    end
+  end)
+end
+
+-- Keymaps
+vim.keymap.set("n", "<leader>ef", function() fzf_in_custom_dir("files") end,
+  { desc = "FZF files in typed dir", noremap = true, silent = true })
+
+vim.keymap.set("n", "<leader>eg", function() fzf_in_custom_dir("grep") end,
+  { desc = "FZF grep in typed dir", noremap = true, silent = true })

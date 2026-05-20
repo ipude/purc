@@ -74,6 +74,28 @@ return {
                 end,
                 desc = 'Open  in /lua/user/',
             },
+            {
+                '<leader>oj',
+                function()
+                    vim.ui.input({
+                        prompt = ' Yazi dir: ',
+                        default = vim.fn.expand('~'),
+                        completion = 'dir',
+                    }, function(input)
+                        if not input or input == '' then return end
+
+                        local path = vim.fn.expand(input) -- resolves ~, $VARS, etc.
+
+                        if vim.fn.isdirectory(path) == 0 then
+                            vim.notify('Not a directory: ' .. path, vim.log.levels.WARN)
+                            return
+                        end
+
+                        require('yazi').yazi(nil, path)
+                    end)
+                end,
+                desc = 'Open Yazi in typed dir',
+            },
         },
         opts = {
             open_for_directories = false, -- Keep oil as default

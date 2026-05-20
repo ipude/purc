@@ -1,5 +1,5 @@
 vim.o.showcmdloc = "statusline"
-vim.o.cmdheight = 0
+vim.o.cmdheight = 1
 
 local function lsp_clients()
     local clients = vim.lsp.get_clients({ bufnr = 0 })
