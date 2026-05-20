@@ -53,18 +53,18 @@ return {
         },
 
     },
-    {
-        'rcarriga/nvim-notify',
-        --         commit = 'a3020c2',
-        init = function()
-            local original_notify = vim.notify
-            vim.notify = function(...)
-                vim.notify = original_notify
-                require('lazy').load({ plugins = { 'nvim-notify' } })
-                vim.notify(...)
-            end
-        end,
-    },
+    -- {
+    --     'rcarriga/nvim-notify',
+    --     --         commit = 'a3020c2',
+    --     init = function()
+    --         local original_notify = vim.notify
+    --         vim.notify = function(...)
+    --             vim.notify = original_notify
+    --             require('lazy').load({ plugins = { 'nvim-notify' } })
+    --             vim.notify(...)
+    --         end
+    --     end,
+    -- },
     {
         'beauwilliams/focus.nvim',
         --         commit = '4135f97',
