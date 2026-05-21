@@ -33,6 +33,7 @@ require('lazy').setup({
         { import = 'user.specs.session' },
         { import = 'user.specs.mini' },
         { import = 'user.specs.colorschemes' },
+        { import = 'user.specs.fold' },
     },
 
     -- ============================

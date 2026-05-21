@@ -60,9 +60,9 @@ wk.add({
 -- BUFFERS
 -- ============================================
 wk.add({
-    { '<leader>bb', '<Cmd>w<CR>',       desc = 'Buffer Save [Only for Oil etc buffers]' },
-    { '<leader>br', '<Cmd>%d<CR>',      desc = 'Buffer Remove data [!RISKY!]' },
-    { '<leader>bc', '<Cmd>bdelete<CR>', desc = 'Buffer Close [SAFE]' },
+    { '<leader>bs', '<Cmd>w<CR>',       desc = 'Buffer Save [Only for Oil etc buffers]' },
+    { '<leader>bc', '<Cmd>%d<CR>',      desc = 'Buffer Remove data [!RISKY!]' },
+    { '<leader>bd', '<Cmd>bdelete<CR>', desc = 'Buffer Close [SAFE]' },
 })
 
 -- ============================================
