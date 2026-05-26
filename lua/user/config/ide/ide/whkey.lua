@@ -26,7 +26,7 @@ wk.setup({
 wk.add({
     -- Top-level groups
     { '<leader>b', group = '󰓩 Buffers' },
-    { '<leader>c', group = '󱘗 Cargo Commands' },
+    { '<leader>c', group = '󱘗 Filetype Commands' },
     { '<leader>d', group = '󰃤 Diagnostics' },
     { '<leader>e', group = '󰍉 Fzf Flexible' },
     { '<leader>f', group = '󰍉 Find Files' },

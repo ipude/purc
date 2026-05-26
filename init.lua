@@ -58,26 +58,6 @@ local function load_stages()
 end
 
 load_stages()
-
--- =========================================================
--- Your Treesitter
--- =========================================================
-vim.keymap.set("n", "<leader>T", function()
-    vim.schedule(function()
-        local bufnr = vim.api.nvim_get_current_buf()
-        if vim.api.nvim_buf_is_valid(bufnr) and vim.api.nvim_buf_get_name(bufnr) ~= "" then
-            if not vim.b[bufnr].ts_lazy_activated then
-                local success, err = pcall(vim.treesitter.start)
-                if success then
-                    vim.b[bufnr].ts_lazy_activated = true
-                    vim.notify("treesitter activated")
-                end
-            end
-        end
-    end)
-end, { desc = "Trigger Treesitter on current un-opened buffer" })
-
-
 -- =========================================================
 -- 3. Post-init
 -- =========================================================

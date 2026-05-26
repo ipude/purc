@@ -1,12 +1,5 @@
 -- user/config/server/LowLevel/rust_analyzer.lua
 local map = vim.keymap.set
-map('n', '<leader>cc', '<cmd>Cargo check<cr>',   { desc = 'Cargo check' })
-map('n', '<leader>cC', '<cmd>Cargo clean<cr>',   { desc = 'Cargo clean' })
-map('n', '<leader>cz', '<cmd>Cargo run<cr>',     { desc = 'Cargo run' })
-map('n', '<leader>cb', '<cmd>Cargo build<cr>',   { desc = 'Cargo build' })
-map('n', '<leader>cu', '<cmd>Cargo update<cr>',  { desc = 'Cargo update' })
-map('n', '<leader>cr', '<cmd>CargoReload<cr>',   { desc = 'Cargo reload' })
-
 vim.lsp.config('rust_analyzer', {
   cmd           = { 'rust-analyzer' },
   filetypes     = { 'rust' },

@@ -52,27 +52,6 @@ vim.o.scrolloff       = 8
 vim.o.sidescrolloff   = 8
 vim.opt.fillchars:append({ eob = ' ' })
 -- ================================================
--- Fold (defer LSP fold until LSP is ready)
--- ================================================
-vim.opt.foldlevel      = 99
-vim.opt.foldlevelstart = 99
-vim.opt.foldenable     = true
-
--- Don't set LSP foldexpr at startup — LSP isn't attached yet anyway
--- Set it per-buffer once LSP attaches
-vim.api.nvim_create_autocmd('LspAttach', {
-  callback = function(ev)
-    local client = vim.lsp.get_client_by_id(ev.data.client_id)
-    if client and client.supports_method('textDocument/foldingRange') then
-      local win = vim.fn.bufwinid(ev.buf)
-      if win == -1 then return end -- buffer not visible in any window
-      vim.wo[win].foldmethod = 'expr'
-      vim.wo[win].foldexpr   = 'v:lua.vim.lsp.foldexpr()'
-    end
-  end,
-})
-
--- ================================================
 -- Bell
 -- ================================================
 vim.o.visualbell = false
