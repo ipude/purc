@@ -31,7 +31,7 @@ return {
                 size = 15,
                 open_mapping = [[tt]],
                 hide_numbers = true,
-                shade_terminals = true,
+                shade_terminals = false, -- keep this false because is  heavy
                 shading_factor = 2,
                 start_insert = true,
                 insert_mappings = true, -- tt works in insert mode too
