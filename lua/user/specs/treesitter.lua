@@ -13,17 +13,13 @@ return {
             -- safe to leave as-is if you want blocking install on first launch
             require('nvim-treesitter').install({
                 'html', 'css', 'javascript', 'typescript', 'tsx',
-                'go', 'gomod', 'gosum', 'gotmpl',
-                'json', 'yaml',
-                'bash',
+                'go', 'json', 'yaml',
             }):wait(300000)
 
             vim.api.nvim_create_autocmd('FileType', {
                 pattern = {
                     'html', 'css', 'javascript', 'typescript', 'tsx',
-                    'go', 'gomod', 'gosum', 'gotmpl',
-                    'json', 'yaml',
-                    'sh', 'bash',
+                    'go', 'json', 'yaml', 'bash',
                 },
                 callback = function()
                     vim.treesitter.start()

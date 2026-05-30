@@ -59,45 +59,6 @@ return {
     },
     {
         'beauwilliams/focus.nvim',
-        --         commit = '4135f97',
         cmd = { 'FocusSplitNicely', 'FocusSplitCycle', 'FocusToggle' },
-    },
-
-    -- in user/specs/ui.lua or wherever your UI plugins live
-    {
-        'lukas-reineke/indent-blankline.nvim',
-        main   = 'ibl',
-        lazy   = true,
-        config = function()
-            require('ibl').setup({
-                indent = {
-                    char = '│', -- or '▏' for thinner, '┊' for dotted
-                    tab_char = '│',
-                    highlight = { 'IblIndent' },
-                    smart_indent_cap = true,
-                },
-
-                whitespace = {
-                    remove_blankline_trail = true,
-                },
-
-                scope = {
-                    enabled = false, -- Let mini.indentscope handle this
-                },
-
-                exclude = {
-                    filetypes = {
-                        'help', 'dashboard', 'neo-tree', 'Trouble', 'trouble',
-                        'lazy', 'mason', 'notify', 'toggleterm', 'lazyterm',
-                        'packer', 'checkhealth', 'man', 'gitcommit',
-                        'TelescopePrompt', 'TelescopeResults', 'lspinfo',
-                        'alpha', 'starter', '',
-                    },
-                    buftypes = {
-                        'terminal', 'nofile', 'quickfix', 'prompt',
-                    },
-                },
-            })
-        end
     },
 }

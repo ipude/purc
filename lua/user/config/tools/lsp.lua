@@ -1,12 +1,3 @@
-local ok, blink = pcall(require, 'blink.cmp')
-if ok then
-  vim.lsp.config('*', {
-    capabilities = blink.get_lsp_capabilities(
-      vim.lsp.protocol.make_client_capabilities()
-    ),
-  })
-end
-
 vim.api.nvim_create_autocmd('LspAttach', {
   group = vim.api.nvim_create_augroup('UserLspConfig', { clear = true }),
   callback = function(ev)

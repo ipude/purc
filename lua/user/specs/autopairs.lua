@@ -23,7 +23,14 @@ return {
 
     {
         "windwp/nvim-ts-autotag",
-        lazy = false,
+        ft = {
+            "html", "xml",
+            "javascript", "javascriptreact", "jsx",
+            "typescript", "typescriptreact", "tsx",
+            "svelte", "vue", "astro",
+            "gohtml", "templ",
+            "php", "markdown",
+        },
         dependencies = { "nvim-treesitter/nvim-treesitter" },
         config = function()
             require("nvim-ts-autotag").setup({
