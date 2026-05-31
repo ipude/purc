@@ -10,18 +10,6 @@ return {
         end,
     },
     {
-        'numToStr/Comment.nvim',
-        config = function()
-            require('Comment').setup({
-                ignore = '^$',
-                toggler = {
-                    line = 'gcc',
-                    block = 'gbc',
-                },
-            })
-        end
-    },
-    {
         {
             "akinsho/toggleterm.nvim",
             version = "*",

@@ -58,23 +58,5 @@ vim.opt.fillchars:append({ eob = ' ' })
 vim.o.visualbell = false
 vim.o.errorbells = false
 -- ================================================
--- Osc 52
--- ================================================
-vim.g.clipboard = {
-  name = "OSC 52",
-  copy = {
-    ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-    ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-  },
-  paste = {
-    ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
-    ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
-  },
-}
--- explicit keymaps only, same as before
-vim.keymap.set('n', '<leader>yc', function()
-  vim.fn.setreg('+', vim.fn.getreg('"'))
-end, { desc = 'Copy yank register to system clipboard' })
--- ================================================
 -- End
 -- ================================================

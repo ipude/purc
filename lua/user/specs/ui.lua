@@ -1,9 +1,8 @@
 return {
     {
-        'akinsho/bufferline.nvim',
-        version = '*',
+        'echasnovski/mini.tabline',
+        version = false,
         event = 'VeryLazy',
-        dependencies = { 'echasnovski/mini.icons', version = false },
         config = function() require('user.ui.core.bufferline') end,
     },
     {
