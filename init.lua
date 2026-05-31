@@ -1,11 +1,5 @@
 vim.opt.shortmess:append('I')  -- skip intro
 vim.opt.shortmess:append('W')  -- skip warnings
-vim.notify = function(msg, level)
-    if level == vim.log.levels.ERROR then return end
-    -- or filter specific messages
-    if msg:find('Spawning language server') then return end
-    if msg:find('deprecated') then return end
-end
 -- require("user.sys.profiler") -- Precedence = #1 (for profiling)
 require('user.sys.options') -- Precedence = #2
 -- =========================================================
@@ -58,26 +52,8 @@ local function load_stages()
 end
 
 load_stages()
+vim.cmd.colorscheme("tokyonight-moon")
 -- =========================================================
 -- 3. Post-init
 -- =========================================================
-vim.cmd.colorscheme("tokyonight-moon")
-vim.api.nvim_create_autocmd("InsertCharPre", {
-  pattern = { "*.html", "*.xml", "*.jsx", "*.tsx" },
-  callback = function()
-    local char = vim.v.char
-    if char == ">" then
-      local line = vim.fn.getline(".")
-      local col = vim.fn.col(".") - 1
-      if line:sub(col, col) == "<" then
-        -- Find tag name and auto-close
-        local tag = line:match("<([%w%-]+)%s*$")
-        if tag then
-          vim.schedule(function()
-            vim.api.nvim_put({ "</" .. tag .. ">" }, "", true, true)
-          end)
-        end
-      end
-    end
-  end,
-})
+require("user.ui.core.dynamic_ui")
