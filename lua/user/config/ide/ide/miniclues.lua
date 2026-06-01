@@ -6,7 +6,7 @@ local miniclue = require('mini.clue')
 miniclue.setup({
     -- Delay before the clue window appears (ms)
     window = {
-        delay = 200,
+        delay = 50,
         config = {
             border = 'rounded',
             -- winblend = 0 is the default, omit if not needed
