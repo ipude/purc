@@ -15,7 +15,7 @@ For a fast, lightweight clone (recommended for just using the config):
 
 **From GitHub:**
 ```bash
-git clone --depth 1 git@github.com:anoninus/GoVim.git ~/.config/nvim
+git clone --depth 1 git@github.com:anoninus/govim.git ~/.config/nvim
 ```
 
 **From GitLab:**
