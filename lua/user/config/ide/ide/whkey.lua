@@ -1,200 +1,77 @@
-local wk = require('which-key')
-
--- ============================================
--- SETUP
--- ============================================
-wk.setup({
-    preset = 'modern',
-    delay = 200,
-    triggers = {
-        { "<auto>", mode = "nvo" },  -- normal, visual, operator-pending
-    },
-    win = {
-        border = 'rounded',
-        wo = { winblend = 0 },
-    },
-    icons = { mappings = false },
-})
-
--- ============================================
--- GROUP DEFINITIONS (no-action keys)
--- ============================================
-wk.add({
-    -- Top-level groups
-    { '<leader>b', group = '󰓩 Buffers' },
-    { '<leader>c', group = '󱘗 Filetype Commands' },
-    { '<leader>d', group = '󰃤 Diagnostics' },
-    { '<leader>e', group = '󰍉 Fzf Flexible' },
-    { '<leader>f', group = '󰍉 Find Files' },
-    { '<leader>g', group = '󰍉 Grep' },
-    { '<leader>G', group = '󰊢 GIT' },
-    { '<leader>h', group = '󰋚 History' },
-    { '<leader>l', group = '󰒲 Lazy / LSP' },
-    { '<leader>o', group = '󰇥 Yazi' },
-    { '<leader>p', group = '󰅇 Paste' },
-    { '<leader>q', group = '󰗼 Quit' },
-    { '<leader>r', group = '󰑓 Reload' },
-    { '<leader>s', group = '󰆓 Sessions' },
-    { '<leader>t', group = '󰆍 Task' },
-    { '<leader>u', group = '󰔡 Toggles' },
-    { '<leader>w', group = '󰆓 Advanced Save' },
-    { '<leader>y', group = '󰅎 Yank' },
-    { '<leader>z', group = '󱐋 Code Runner' },
-
-    -- Sub-groups
-    { '<leader>fi', group = '󰍉 Find Files ..' },
-    { '<leader>gi', group = '󰊢 Grep in ..' },
-    { '<leader>ll', group = '󰒲 Lazy' },
-    { '<leader>lo', group = '󰏗 Plug Load' },
-    { '<leader>ls', group = '󰒍 LSP Server' },
-    { '<leader>qf', group = '󰗼 Force Quit' },
-    { '<leader>wf', group = '󰆓 Force Save' },
-})
-
 -- ============================================
 -- BUFFERS
 -- ============================================
-wk.add({
-    { '<leader>bs', '<Cmd>w<CR>',       desc = 'Buffer Save [Only for Oil etc buffers]' },
-    { '<leader>bc', '<Cmd>%d<CR>',      desc = 'Buffer Remove data [!RISKY!]' },
-    { '<leader>bd', '<Cmd>bdelete<CR>', desc = 'Buffer Close [SAFE]' },
-    { '<leader>bb', function() require('fzf-lua').buffers() end, desc = 'Pick buffer' },
-})
+vim.keymap.set('n', '<leader>bs', '<Cmd>w<CR>',       { desc = 'Buffer Save [Only for Oil etc buffers]' })
+vim.keymap.set('n', '<leader>bc', '<Cmd>%d<CR>',      { desc = 'Buffer Remove data [!RISKY!]' })
+vim.keymap.set('n', '<leader>bd', '<Cmd>bdelete<CR>', { desc = 'Buffer Close [SAFE]' })
+vim.keymap.set('n', '<leader>bb', function() require('fzf-lua').buffers() end, { desc = 'Pick buffer' })
 
 -- ============================================
 -- GIT
 -- ============================================
-wk.add({
-    { '<leader>lg', '<Cmd>LazyGit<CR>', desc = 'LazyGit' },
-    { '<leader>Gl', '<Cmd>LazyGit<CR>', desc = 'LazyGit' },
-})
+vim.keymap.set('n', '<leader>lg', '<Cmd>LazyGit<CR>', { desc = 'LazyGit' })
+vim.keymap.set('n', '<leader>Gl', '<Cmd>LazyGit<CR>', { desc = 'LazyGit' })
 
 -- ============================================
 -- NOTIFICATIONS
 -- ============================================
-wk.add({
-    { '<leader>hn', '<Cmd>lua MiniNotify.show_history()<CR>', desc = 'Notification History' },
-})
+vim.keymap.set('n', '<leader>hn', '<Cmd>lua MiniNotify.show_history()<CR>', { desc = 'Notification History' })
 
 -- ============================================
--- Reload
+-- RELOAD
 -- ============================================
-wk.add({
-    {
-        '<leader>rr',
-        '<Cmd>mksession! Session.vim | restart source Session.vim<cr>',
-        desc = 'Restart (Save & Restore Session)'
-    },
-    {
-        '<leader>rs',
-        '<Cmd>restart<cr>',
-        desc = 'Restart Safely (Fails if Unsaved)'
-    },
-    {
-        '<leader>rf',
-        '<Cmd>restart +qall!<cr>', -- Added the ! here so it actually forces the quit
-        desc = 'Restart & Discard Unsaved Changes'
-    },
-})
+vim.keymap.set('n', '<leader>rr', '<Cmd>mksession! Session.vim | restart source Session.vim<cr>', { desc = 'Restart (Save & Restore Session)' })
+vim.keymap.set('n', '<leader>rs', '<Cmd>restart<cr>',        { desc = 'Restart Safely (Fails if Unsaved)' })
+vim.keymap.set('n', '<leader>rf', '<Cmd>restart +qall!<cr>', { desc = 'Restart & Discard Unsaved Changes' })
 
 -- ============================================
 -- QUIT
 -- ============================================
-wk.add({
-    { '<leader>qq',  '<Cmd>q<CR>',   desc = 'Quit' },
-    { '<leader>qfq', '<Cmd>q!<CR>',  desc = 'Force Quit' },
-    { '<leader>qfa', '<Cmd>qa<CR>',  desc = 'Quit All' },
-    { '<leader>qfw', '<Cmd>qa!<CR>', desc = 'Force Quit All' },
-})
+vim.keymap.set('n', '<leader>qq',  '<Cmd>q<CR>',   { desc = 'Quit' })
+vim.keymap.set('n', '<leader>qfq', '<Cmd>q!<CR>',  { desc = 'Force Quit' })
+vim.keymap.set('n', '<leader>qfa', '<Cmd>qa<CR>',  { desc = 'Quit All' })
+vim.keymap.set('n', '<leader>qfw', '<Cmd>qa!<CR>', { desc = 'Force Quit All' })
 
 -- ============================================
 -- TOGGLES
 -- ============================================
-wk.add({
-    { '<leader>un', '<Cmd>set number!<CR>',         desc = 'Line Numbers' },
-    { '<leader>ur', '<Cmd>set relativenumber!<CR>', desc = 'Relative Numbers' },
-    { '<leader>uw', '<Cmd>set wrap!<CR>',           desc = 'Word Wrap' },
-    { '<leader>uc', '<Cmd>set cursorline!<CR>',     desc = 'Cursor Line' },
-    { '<leader>uh', '<Cmd>set hlsearch!<CR>',       desc = 'Highlight Search' },
-})
+vim.keymap.set('n', '<leader>un', '<Cmd>set number!<CR>',         { desc = 'Toggle Line Numbers' })
+vim.keymap.set('n', '<leader>ur', '<Cmd>set relativenumber!<CR>', { desc = 'Toggle Relative Numbers' })
+vim.keymap.set('n', '<leader>uw', '<Cmd>set wrap!<CR>',           { desc = 'Toggle Word Wrap' })
+vim.keymap.set('n', '<leader>uc', '<Cmd>set cursorline!<CR>',     { desc = 'Toggle Cursor Line' })
+vim.keymap.set('n', '<leader>uh', '<Cmd>set hlsearch!<CR>',       { desc = 'Toggle Highlight Search' })
 
 -- ============================================
 -- SAVE
 -- ============================================
-wk.add({
-    { '<leader>ws',  '<Cmd>wall<CR>',   desc = 'Save All' },
-    { '<leader>wq',  '<Cmd>wq<CR>',     desc = 'Save & Quit' },
-    { '<leader>wfs', '<Cmd>w!<CR>',     desc = 'Force Save' },
-    { '<leader>wfS', '<Cmd>wall!<CR>',  desc = 'Force Save All' },
-    { '<leader>wfa', '<Cmd>wqall!<CR>', desc = 'Force Save & Quit All' },
-})
+vim.keymap.set('n', '<leader>ws',  '<Cmd>wall<CR>',   { desc = 'Save All' })
+vim.keymap.set('n', '<leader>wq',  '<Cmd>wq<CR>',     { desc = 'Save & Quit' })
+vim.keymap.set('n', '<leader>wfs', '<Cmd>w!<CR>',     { desc = 'Force Save' })
+vim.keymap.set('n', '<leader>wfS', '<Cmd>wall!<CR>',  { desc = 'Force Save All' })
+vim.keymap.set('n', '<leader>wfa', '<Cmd>wqall!<CR>', { desc = 'Force Save & Quit All' })
 
 -- ============================================
 -- YANK
 -- ============================================
-wk.add({
-    { '<leader>ya', '<Cmd>%y+<CR>',                    desc = 'Yank All' },
-    { '<leader>yp', "<Cmd>let @+ = expand('%:p')<CR>", desc = 'Yank File Path' },
-    { '<leader>yf', "<Cmd>let @+ = expand('%:t')<CR>", desc = 'Yank File Name' },
-})
+vim.keymap.set('n', '<leader>ya', '<Cmd>%y+<CR>',                    { desc = 'Yank All' })
+vim.keymap.set('n', '<leader>yp', "<Cmd>let @+ = expand('%:p')<CR>", { desc = 'Yank File Path' })
+vim.keymap.set('n', '<leader>yf', "<Cmd>let @+ = expand('%:t')<CR>", { desc = 'Yank File Name' })
 
 -- ============================================
 -- LAZY
 -- ============================================
-wk.add({
-    { '<leader>llp', '<Cmd>Lazy profile<CR>', desc = 'Profile' },
-    { '<leader>llu', '<Cmd>Lazy update<CR>',  desc = 'Update' },
-    { '<leader>lls', '<Cmd>Lazy sync<CR>',    desc = 'Sync' },
-})
+vim.keymap.set('n', '<leader>llp', '<Cmd>Lazy profile<CR>', { desc = 'Lazy Profile' })
+vim.keymap.set('n', '<leader>llu', '<Cmd>Lazy update<CR>',  { desc = 'Lazy Update' })
+vim.keymap.set('n', '<leader>lls', '<Cmd>Lazy sync<CR>',    { desc = 'Lazy Sync' })
 
 -- ============================================
 -- LSP SERVER
 -- ============================================
-wk.add({
-    { '<leader>lsi', '<Cmd>LspInfo<CR>',    desc = 'Info' },
-    { '<leader>lsl', '<Cmd>LspLog<CR>',     desc = 'Log' },
-    { '<leader>lsr', '<Cmd>LspRestart<CR>', desc = 'Restart' },
-})
+vim.keymap.set('n', '<leader>lsi', '<Cmd>LspInfo<CR>',    { desc = 'LSP Info' })
+vim.keymap.set('n', '<leader>lsl', '<Cmd>LspLog<CR>',     { desc = 'LSP Log' })
+vim.keymap.set('n', '<leader>lsr', '<Cmd>LspRestart<CR>', { desc = 'LSP Restart' })
 
 -- ============================================
 -- VISUAL MODE
 -- ============================================
-wk.add({
-    mode = { 'v', 'x' },
-    { '<leader>r', group = '󰛔 Replace' },
-    { '<leader>y', '"+y', desc = 'Yank to Clipboard' },
-})
-
--- ============================================
--- KEYMAP CONFLICT CHECKER  (run :CheckKeymaps)
--- ============================================
-local function check_leader_conflicts()
-    local seen = {}
-    local conflicts = {}
-
-    for _, map in ipairs(vim.api.nvim_get_keymap('n')) do
-        if map.lhs:match('^<leader>') then
-            if seen[map.lhs] then
-                table.insert(conflicts, string.format(
-                    '  %-20s  %s  ←→  %s', map.lhs, seen[map.lhs], map.rhs or '?'
-                ))
-            else
-                seen[map.lhs] = map.rhs or '?'
-            end
-        end
-    end
-
-    if #conflicts > 0 then
-        vim.notify(
-            '󰀪 Leader conflicts found:\n' .. table.concat(conflicts, '\n'),
-            vim.log.levels.WARN,
-            { title = 'Keymap Conflicts' }
-        )
-    else
-        vim.notify('󰸞 No leader conflicts found', vim.log.levels.INFO, { title = 'Keymaps' })
-    end
-end
-
-vim.api.nvim_create_user_command('CheckKeymaps', check_leader_conflicts, {
-    desc = 'Check for leader keymap conflicts',
-})
+vim.keymap.set({ 'v', 'x' }, '<leader>y', '"+y', { desc = 'Yank to Clipboard' })
