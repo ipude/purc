@@ -1,83 +1,86 @@
--- conform.nvim configuration with 4-space indentation and toggle
-
--- Setup conform.nvim
-require('conform').setup({
+require("conform").setup({
     formatters_by_ft = {
         -- JavaScript/TypeScript
-        javascript = { 'prettier' },
-        typescript = { 'prettier' },
-        javascriptreact = { 'prettier' },
-        typescriptreact = { 'prettier' },
+        javascript = { "prettier" },
+        typescript = { "prettier" },
+        javascriptreact = { "prettier" },
+        typescriptreact = { "prettier" },
 
         -- Web
-        html = { 'prettier' },
-        css = { 'prettier' },
-        scss = { 'prettier' },
-        json = { 'prettier' },
-        jsonc = { 'prettier' },
-        yaml = { 'prettier' },
-        markdown = { 'prettier' },
+        html = { "prettier" },
+        css = { "prettier" },
+        scss = { "prettier" },
+        json = { "prettier" },
+        jsonc = { "prettier" },
+        yaml = { "prettier" },
+        markdown = { "prettier" },
 
         -- Python
-        python = { 'black' },
+        python = { "black" },
 
         -- Lua
-        lua = { 'stylua' },
+        lua = { "stylua" },
 
         -- C/C++
-        c = { 'clang_format' },
-        cpp = { 'clang_format' },
+        c = { "clang_format" },
+        cpp = { "clang_format" },
 
         -- Go
-        go = { 'gofmt' },
+        go = { "gofmt" },
 
         -- Rust
         rustfmt = {
             prepend_args = {
-                '--config', 'tab_spaces=4',
+                "--config",
+                "tab_spaces=4",
             },
         },
         -- Shell
-        sh = { 'shfmt' },
-        bash = { 'shfmt' },
+        sh = { "shfmt" },
+        bash = { "shfmt" },
 
         -- Other
-        toml = { 'taplo' },
+        toml = { "taplo" },
 
         -- for all types
         default_format_opts = {
-            lsp_format = 'fallback',
+            lsp_format = "fallback",
         },
-
     },
 
     -- Configure formatters with 4-space indentation
     formatters = {
         prettier = {
             prepend_args = {
-                '--tab-width', '4',
-                '--use-tabs', 'false',
+                "--tab-width",
+                "4",
+                "--use-tabs",
+                "false",
             },
         },
         black = {
             prepend_args = {
-                '--line-length', '88',
+                "--line-length",
+                "88",
             },
         },
         stylua = {
             prepend_args = {
-                '--indent-type', 'Spaces',
-                '--indent-width', '4',
+                "--indent-type",
+                "Spaces",
+                "--indent-width",
+                "4",
             },
         },
         clang_format = {
             prepend_args = {
-                '-style={IndentWidth: 4, UseTab: Never}',
+                "-style={IndentWidth: 4, UseTab: Never}",
             },
         },
         shfmt = {
             prepend_args = {
-                '-i', '4',
+                "-i",
+                "4",
             },
         },
     },
@@ -91,45 +94,30 @@ vim.g.conform_enabled = true
 local function toggle_conform()
     vim.g.conform_enabled = not vim.g.conform_enabled
     if vim.g.conform_enabled then
-        print('✓ Conform formatter enabled')
+        print("✓ Conform formatter enabled")
     else
-        print('✗ Conform formatter disabled')
-    end
-end
-
--- Format function that respects the toggle
-local function format_file()
-    if vim.g.conform_enabled then
-        require('conform').format({
-            async = false,
-            lsp_fallback = true,
-            timeout_ms = 500,
-        })
-    else
-        print('Formatter is disabled. Press <Leader>o to enable.')
+        print("✗ Conform formatter disabled")
     end
 end
 
 -- Keybindings
-vim.keymap.set('n', '<leader>uf', toggle_conform, {
-    desc = 'Toggle conform formatter on/off',
+vim.keymap.set("n", "<leader>uf", toggle_conform, {
+    desc = "Toggle conform formatter on/off",
     noremap = true,
-    silent = true
+    silent = true,
 })
 -- Also support visual mode formatting
-vim.keymap.set('v', '<leader>vf', function()
+vim.keymap.set("v", "<leader>vf", function()
     if vim.g.conform_enabled then
-        require('conform').format({
+        require("conform").format({
             async = false,
-            lsp_fallback = true
+            lsp_fallback = true,
         })
     else
-        print('Formatter is disabled. Press <Leader>ffo to enable.')
+        print("Formatter is disabled. Press <Leader>ffo to enable.")
     end
 end, {
-    desc = 'Format selection with conform',
+    desc = "Format selection with conform",
     noremap = true,
-    silent = true
+    silent = true,
 })
-
--- Set tab settings globally for consistency
