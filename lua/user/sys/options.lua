@@ -33,7 +33,7 @@ vim.keymap.set('n', '<Down>', 'g<Down>')
 -- ================================================
 -- UI & Display
 -- ================================================
-vim.o.cmdheight      = 0
+vim.o.cmdheight      = 1
 vim.o.showcmd        = false
 vim.opt.splitright   = true
 vim.opt.splitbelow   = true
