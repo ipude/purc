@@ -1,10 +1,18 @@
 local M = {}
 
 local runners = {
-    go = function(f) return "go run " .. f end,
-    python = function(f) return "python3 " .. f end,
-    javascript = function(f) return "node " .. f end,
-    typescript = function(f) return "npx ts-node " .. f end,
+    go = function(f)
+        return "go run " .. f
+    end,
+    python = function(f)
+        return "python3 " .. f
+    end,
+    javascript = function(f)
+        return "node " .. f
+    end,
+    typescript = function(f)
+        return "npx ts-node " .. f
+    end,
     rust = function(f)
         local root = vim.fn.findfile("Cargo.toml", vim.fn.expand("%:p:h") .. ";")
         if root ~= "" then
@@ -20,21 +28,33 @@ local runners = {
         local out = vim.fn.fnamemodify(f, ":r")
         return "g++ " .. f .. " -o " .. out .. " && " .. out
     end,
-    lua = function(f) return "lua " .. f end,
-    sh = function(f) return "bash " .. f end,
-    bash = function(f) return "bash " .. f end,
-    ruby = function(f) return "ruby " .. f end,
-    php = function(f) return "php " .. f end,
-    zig = function(f) return "zig run " .. f end,
-    dart = function(f) return "dart run " .. f end,
+    lua = function(f)
+        return "lua " .. f
+    end,
+    sh = function(f)
+        return "bash " .. f
+    end,
+    bash = function(f)
+        return "bash " .. f
+    end,
+    ruby = function(f)
+        return "ruby " .. f
+    end,
+    php = function(f)
+        return "php " .. f
+    end,
+    zig = function(f)
+        return "zig run " .. f
+    end,
+    dart = function(f)
+        return "dart run " .. f
+    end,
 }
 
 local term_buf = nil
 
 local function is_valid_term()
-    return term_buf ~= nil
-        and vim.api.nvim_buf_is_valid(term_buf)
-        and vim.bo[term_buf].buftype == "terminal"
+    return term_buf ~= nil and vim.api.nvim_buf_is_valid(term_buf) and vim.bo[term_buf].buftype == "terminal"
 end
 
 function M.run_file()
