@@ -9,14 +9,11 @@ return {
         keys = {
             { "-", "<cmd>Oil<CR>", mode = "n", desc = "Open parent directory" },
         },
+        event = "VeryLazy",
         opts = {
-            -- Disable LSP file-methods entirely — this is what triggers the
-            -- "update all references?" prompt that causes your crash
             lsp_file_methods = {
                 enabled = false,
             },
-
-            -- Optional but recommended quality-of-life settings
             default_file_explorer = true,
             skip_confirm_for_simple_edits = true,
             view_options = {
