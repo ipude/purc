@@ -38,10 +38,24 @@ return {
 
             completion = {
                 documentation = { auto_show = false },
+                menu = {
+                    draw = {
+                        columns = { { "kind_icon" }, { "label", gap = 1 } }, -- drop label_description
+                        components = {
+                            label = {
+                                width = { fill = true, max = 40 }, -- cap label width
+                                text = function(ctx)
+                                    -- show only the label, not the detail (signature body)
+                                    return ctx.label
+                                end,
+                            },
+                        },
+                    },
+                },
             },
 
             sources = {
-                default = { "lsp", "path", "snippets"},
+                default = { "lsp", "path", "snippets" },
             },
 
             fuzzy = { implementation = "prefer_rust" },
