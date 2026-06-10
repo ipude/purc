@@ -152,16 +152,15 @@ return {
         },
     },
     {
-        "kdheepak/lazygit.nvim",
-        cmd = {
-            "LazyGit",
-            "LazyGitConfig",
-            "LazyGitCurrentFile",
-            "LazyGitFilter",
-            "LazyGitFilterCurrentFile",
-        },
+        "NeogitOrg/neogit",
         dependencies = {
             "nvim-lua/plenary.nvim",
+            "sindrets/diffview.nvim",
+            "ibhagwan/fzf-lua",
         },
+        keys = {
+            { "<leader>lg", "<cmd>Neogit<cr>", desc = "Neogit" },
+        },
+        config = true,
     },
 }

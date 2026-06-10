@@ -123,8 +123,8 @@ end, { desc = "Pick buffer" })
 -- ============================================
 -- GIT
 -- ============================================
-vim.keymap.set("n", "<Leader>lg", "<Cmd>LazyGit<CR>", { desc = "LazyGit" })
-vim.keymap.set("n", "<Leader>Gl", "<Cmd>LazyGit<CR>", { desc = "LazyGit" })
+-- vim.keymap.set("n", "<Leader>lg", "<Cmd>LazyGit<CR>", { desc = "LazyGit" })
+-- vim.keymap.set("n", "<Leader>Gl", "<Cmd>LazyGit<CR>", { desc = "LazyGit" })
 
 -- ============================================
 -- NOTIFICATIONS
