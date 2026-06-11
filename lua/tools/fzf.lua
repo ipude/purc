@@ -151,8 +151,6 @@ k('n', '<leader>gc', function() fzf().live_grep({ cwd = vim.fn.stdpath('config')
     { desc = 'Grep config' })
 k('n', '<leader>gih', function() fzf().live_grep({ cwd = sys_home(), prompt = 'GrepHome/' }) end, { desc = 'Grep home' })
 k('n', '<leader>gir', function() fzf().live_grep({ cwd = sys_root(), prompt = 'GrepRoot/' }) end, { desc = 'Grep root' })
-k('n', '<leader>Gc', function() fzf().git_commits() end, { desc = 'Git commits' })
-k('n', '<leader>Gs', function() fzf().git_status() end, { desc = 'Git status' })
 
 local function fzf_in_custom_dir(mode)
     mode = mode or 'files'

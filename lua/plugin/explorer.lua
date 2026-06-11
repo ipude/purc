@@ -34,8 +34,6 @@ return {
             { "<leader>gc", desc = "Grep config" },
             { "<leader>gih", desc = "Grep home" },
             { "<leader>gir", desc = "Grep root" },
-            { "<leader>Gc", desc = "Git commits" },
-            { "<leader>Gs", desc = "Git status" },
             { "<leader>ef", desc = "FZF files in typed dir" },
             { "<leader>eg", desc = "FZF grep in typed dir" },
         },
@@ -150,7 +148,7 @@ return {
         "NeogitOrg/neogit",
         cmd = "Neogit",
         keys = {
-            { "<leader>lg", "<cmd>Neogit<cr>", desc = "Neogit" },
+            { "<leader>ng", "<cmd>Neogit<cr>", desc = "Neogit" },
         },
         dependencies = {
             { "nvim-lua/plenary.nvim", lazy = true },
