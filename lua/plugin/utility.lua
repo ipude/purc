@@ -27,29 +27,17 @@ return {
         end,
     },
     {
-        "lukas-reineke/indent-blankline.nvim",
-        main = "ibl",
-        lazy = true, 
-        event = "VeryLazy",
-        opts = {
-            indent = {
-                char = "│",
-                tab_char = "│",
-            },
-            scope = {
-                enabled = false,
-            },
-            exclude = {
-                filetypes = {
-                    "help",
-                    "dashboard",
-                    "lazy",
-                    "mason",
-                    "notify",
-                    "toggleterm",
-                    "lazyterm",
+        "saecki/crates.nvim",
+        event = { "BufRead Cargo.toml" },
+        config = function()
+            require("crates").setup({
+                lsp = {
+                    enabled = true,
+                    actions = true,
+                    completion = true,
+                    hover = true,
                 },
-            },
-        },
+            })
+        end,
     },
 }
