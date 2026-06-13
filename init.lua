@@ -1,5 +1,6 @@
 vim.loader.enable()
 require("sys")
+require("map")
 require("ui")
 require("plugin")
 require("server")
