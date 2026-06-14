@@ -57,9 +57,14 @@ vim.diagnostic.config({
     severity_sort = true,
 })
 
-vim.keymap.set("n", "<M-j>", function()
-    vim.diagnostic.jump({ count = 1, float = false })
-end, { buffer = args.buf, desc = "Next diagnostic" })
-vim.keymap.set("n", "<M-k>", function()
-    vim.diagnostic.jump({ count = -1, float = false })
-end, { buffer = args.buf, desc = "Prev diagnostic" })
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(args)
+        vim.keymap.set("n", "<M-j>", function()
+            vim.diagnostic.jump({ count = 1, float = false })
+        end, { buffer = args.buf, desc = "Next diagnostic" })
+
+        vim.keymap.set("n", "<M-k>", function()
+            vim.diagnostic.jump({ count = -1, float = false })
+        end, { buffer = args.buf, desc = "Prev diagnostic" })
+    end,
+})
