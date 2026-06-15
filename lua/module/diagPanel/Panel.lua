@@ -13,24 +13,55 @@ local SEV_HL = {
     [SEV.HINT]  = "DiagnosticHint",
 }
 
+local SEV_ICON = {
+    [SEV.ERROR] = "● ",
+    [SEV.WARN]  = "● ",
+    [SEV.INFO]  = "● ",
+    [SEV.HINT]  = "● ",
+}
+
 -- ── highlights ─────────────────────────────────────────────────────────────
 
 local function setup_highlights()
-    vim.api.nvim_set_hl(0, "DiagPanelCurLine", { link = "Title",   default = true })
-    vim.api.nvim_set_hl(0, "DiagPanelMeta",    { link = "Comment", default = true })
-    vim.api.nvim_set_hl(0, "DiagPanelMsg",     { link = "Normal",  default = true })
+    -- Current-line heading: bright/title weight
+    vim.api.nvim_set_hl(0, "DiagPanelCurLine", { link = "Title",    default = true })
+    -- Non-current headings: link to Function — picks up theme's accent color
+    -- (blue, gold, teal, etc.) so they read as headings, not plain text
+    vim.api.nvim_set_hl(0, "DiagPanelHeading", { link = "Function", default = true })
+    -- Tree chrome and source tags
+    vim.api.nvim_set_hl(0, "DiagPanelMeta",    { link = "Comment",  default = true })
+    -- Message body
+    vim.api.nvim_set_hl(0, "DiagPanelMsg",     { link = "Normal",   default = true })
+    -- Tree connector lines  │ ├ └ ─
+    vim.api.nvim_set_hl(0, "DiagPanelTree",    { link = "NonText",  default = true })
+end
+
+-- ── statusline ─────────────────────────────────────────────────────────────
+--
+-- With laststatus=3 the global statusline lives at the very bottom.
+-- Each split still has its own per-window statusline drawn at the split
+-- boundary — that IS the separator bar.  Setting vim.wo[win].statusline
+-- gives us:   ─ Diagnostic Panel ──────────────────────────────────────
+-- %#Hl#  = switch highlight group inline
+-- %=     = right-fill (pushes nothing; combined with the rule text acts
+--          as an infinite right-pad that Neovim clips to window width)
+
+local function panel_statusline()
+    return "%#NonText#─%#DiagPanelCurLine# Diagnostic Panel %#NonText#%{"
+        .. "repeat('─', winwidth(0) - 20)}"
 end
 
 -- ── build lines + extmarks ─────────────────────────────────────────────────
 --
--- Each line-group occupies exactly (1 + N) real buffer lines:
---   row 0  ""           ← blank anchor; virtual text "⟩ line 42" sits here
---   row 1  "  ●  msg"
---   row 2  "  ●  msg"
+-- Tree layout per line-group:
 --
--- Between groups: one blank separator line (no virt text).
-
-local BULLET = "●"   -- U+25CF, 3 UTF-8 bytes
+--   (virtual heading overlay on blank anchor line)
+--   │
+--   ├─ 󰅚  Error message   [source]
+--   ├─ 󰀪  Warning message
+--   └─ 󰋽  Info message
+--
+-- Between groups: one blank separator line.
 
 local function build(diags, cur_line)
     local by_lnum = {}
@@ -50,9 +81,6 @@ local function build(diags, cur_line)
         return a < b
     end)
 
-    -- lines[]  : raw buffer text
-    -- hls[]    : { row, col_s, col_e, grp }  — nvim_buf_add_highlight
-    -- virts[]  : { row, virt_text = {{text, hl}, ...} } — extmark virt_text
     local lines = {}
     local hls   = {}
     local virts = {}
@@ -69,16 +97,16 @@ local function build(diags, cur_line)
 
     for i, ln in ipairs(order) do
         local is_cur  = (ln == cur_line)
-        local hdr_hl  = is_cur and "DiagPanelCurLine" or "Normal"
-        local arrow   = is_cur and "› " or "  "
-        local lbl     = arrow .. "line " .. tostring(ln + 1)
+        local hdr_hl  = is_cur and "DiagPanelCurLine" or "DiagPanelHeading"
+        local marker  = is_cur and "› " or "■ "
+        local lbl     = marker .. "line " .. tostring(ln + 1)
 
         -- Separator blank between groups
         if i > 1 then
             table.insert(lines, "")
         end
 
-        -- Anchor row: blank line that carries the virtual heading
+        -- Anchor row: blank line that carries the virtual heading overlay
         local anchor = #lines
         table.insert(lines, "")
         table.insert(virts, {
@@ -86,19 +114,45 @@ local function build(diags, cur_line)
             virt_text = { { lbl, hdr_hl } },
         })
 
-        -- Diagnostic rows
-        for _, d in ipairs(by_lnum[ln]) do
-            local msg    = d.message:gsub("\n", " ")
-            local src    = d.source and ("[" .. d.source .. "]") or ""
-            local prefix = "  " .. BULLET .. "  "
-            local entry  = prefix .. msg .. (src ~= "" and ("  " .. src) or "")
-            local erow   = #lines
+        local group   = by_lnum[ln]
+        local n       = #group
+
+        -- Trunk line  │  sits on its own row below the heading
+        local trunk_row = #lines
+        table.insert(lines, "│")
+        hl(trunk_row, 0, #"│", "DiagPanelTree")
+
+        -- Diagnostic rows with tree connectors
+        for j, d in ipairs(group) do
+            local is_last  = (j == n)
+            local connector = is_last and "└─ " or "├─ "
+            local icon      = SEV_ICON[d.severity] or "● "
+            local msg       = d.message:gsub("\n", " ")
+            local src       = d.source and ("[" .. d.source .. "]") or ""
+
+            -- Build the full line text
+            local entry = connector .. icon .. msg .. (src ~= "" and ("  " .. src) or "")
+            local erow  = #lines
             table.insert(lines, entry)
 
-            hl(erow, 2, 2 + #BULLET,           SEV_HL[d.severity] or "Normal")
-            hl(erow, #prefix, #prefix + #msg,   "DiagPanelMsg")
+            -- connector  ├─  or  └─
+            hl(erow, 0, #connector, "DiagPanelTree")
+
+            -- severity icon
+            local icon_s = #connector
+            local icon_e = icon_s + #icon
+            hl(erow, icon_s, icon_e, SEV_HL[d.severity] or "Normal")
+
+            -- message
+            local msg_s = icon_e
+            local msg_e = msg_s + #msg
+            hl(erow, msg_s, msg_e, "DiagPanelMsg")
+
+            -- source tag
             if src ~= "" then
-                hl(erow, #prefix + #msg + 2, #entry, "DiagPanelMeta")
+                local src_s = msg_e + 2
+                local src_e = src_s + #src
+                hl(erow, src_s, src_e, "DiagPanelMeta")
             end
         end
     end
@@ -131,9 +185,9 @@ local function render(diags, cur_line)
 
     for _, v in ipairs(virts) do
         vim.api.nvim_buf_set_extmark(S.bufnr, ns, v.row, 0, {
-            virt_text          = v.virt_text,
-            virt_text_pos      = "overlay",   -- replaces the blank line visually
-            hl_mode            = "combine",
+            virt_text     = v.virt_text,
+            virt_text_pos = "overlay",
+            hl_mode       = "combine",
         })
     end
 end
@@ -190,8 +244,11 @@ local function open(height)
     S.winid = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(S.winid, S.bufnr)
 
-    -- winbar is per-split and works with laststatus=3
-    vim.wo[S.winid].winbar = "  󰨮  Diagnostic Panel"
+    -- ── per-window statusline ──────────────────────────────────────────────
+    -- laststatus=3 draws one global bar at the bottom, but every split still
+    -- has its own statusline at the split boundary.  Overriding it here gives
+    -- us the  ─ Diagnostic Panel ───  rule without touching winbar at all.
+    vim.wo[S.winid].statusline = panel_statusline()
 
     local wo = vim.wo[S.winid]
     wo.number         = false
