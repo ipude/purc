@@ -83,16 +83,15 @@ local function build(diags, cur_line)
 
     local lines = {}
     local hls   = {}
-    local virts = {}
 
     local function hl(row, cs, ce, grp)
         table.insert(hls, { row = row, col_s = cs, col_e = ce, grp = grp })
     end
 
     if #order == 0 then
-        table.insert(lines, "")
-        table.insert(virts, { row = 0, virt_text = { { "  ✓  no diagnostics", "DiagPanelMeta" } } })
-        return lines, hls, virts
+        table.insert(lines, "  ✓  no diagnostics")
+        hl(0, 0, #"  ✓  no diagnostics", "DiagPanelMeta")
+        return lines, hls
     end
 
     for i, ln in ipairs(order) do
@@ -106,21 +105,13 @@ local function build(diags, cur_line)
             table.insert(lines, "")
         end
 
-        -- Anchor row: blank line that carries the virtual heading overlay
-        local anchor = #lines
-        table.insert(lines, "")
-        table.insert(virts, {
-            row       = anchor,
-            virt_text = { { lbl, hdr_hl } },
-        })
+        -- Heading as real buffer text — fully yankable with osc52
+        local hrow = #lines
+        table.insert(lines, lbl)
+        hl(hrow, 0, #lbl, hdr_hl)
 
-        local group   = by_lnum[ln]
-        local n       = #group
-
-        -- Trunk line  │  sits on its own row below the heading
-        local trunk_row = #lines
-        table.insert(lines, "│")
-        hl(trunk_row, 0, #"│", "DiagPanelTree")
+        local group = by_lnum[ln]
+        local n     = #group
 
         -- Diagnostic rows with tree connectors
         for j, d in ipairs(group) do
@@ -157,7 +148,7 @@ local function build(diags, cur_line)
         end
     end
 
-    return lines, hls, virts
+    return lines, hls
 end
 
 -- ── panel state ────────────────────────────────────────────────────────────
@@ -171,7 +162,7 @@ local function is_open()
 end
 
 local function render(diags, cur_line)
-    local lines, hls, virts = build(diags, cur_line)
+    local lines, hls = build(diags, cur_line)
 
     vim.bo[S.bufnr].modifiable = true
     vim.api.nvim_buf_set_lines(S.bufnr, 0, -1, false, lines)
@@ -181,14 +172,6 @@ local function render(diags, cur_line)
 
     for _, h in ipairs(hls) do
         vim.api.nvim_buf_add_highlight(S.bufnr, ns, h.grp, h.row, h.col_s, h.col_e)
-    end
-
-    for _, v in ipairs(virts) do
-        vim.api.nvim_buf_set_extmark(S.bufnr, ns, v.row, 0, {
-            virt_text     = v.virt_text,
-            virt_text_pos = "overlay",
-            hl_mode       = "combine",
-        })
     end
 end
 
