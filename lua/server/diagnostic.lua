@@ -59,11 +59,11 @@ vim.diagnostic.config({
 
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
-        vim.keymap.set("n", "<M-j>", function()
+        vim.keymap.set("n", "<F2>", function()
             vim.diagnostic.jump({ count = 1, float = false })
         end, { buffer = args.buf, desc = "Next diagnostic" })
 
-        vim.keymap.set("n", "<M-k>", function()
+        vim.keymap.set("n", "<F4>", function()
             vim.diagnostic.jump({ count = -1, float = false })
         end, { buffer = args.buf, desc = "Prev diagnostic" })
     end,

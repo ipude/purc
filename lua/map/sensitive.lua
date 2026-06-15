@@ -1,10 +1,3 @@
--- This map is ment to intercept <UP> and <DOWN> keys in Normal and Insert mode.
---
-
-vim.keymap.set({'n', 'i'}, '<Up>', '<Nop>')
-vim.keymap.set({'n', 'i'}, '<Down>', '<Nop>')
-vim.keymap.set('i', '<Left>', '<Nop>')
-vim.keymap.set('i', '<Right>', '<Nop>')
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "*",
   callback = function()
