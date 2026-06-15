@@ -5,22 +5,28 @@ return {
     {
         "stevearc/oil.nvim",
         lazy = true,
+        event = "BufEnter",
         keys = {
             { "-", "<cmd>Oil<CR>", mode = "n", desc = "Open parent directory" },
         },
-        opts = {
-            lsp_file_methods = {
-                enabled = false,
-            },
-            default_file_explorer = true,
-            skip_confirm_for_simple_edits = true,
-            view_options = {
-                show_hidden = true,
-            },
-        },
+        config = function()
+            vim.defer_fn(function()
+                require("oil").setup({
+                    lsp_file_methods = {
+                        enabled = false,
+                    },
+                    default_file_explorer = true,
+                    skip_confirm_for_simple_edits = true,
+                    view_options = {
+                        show_hidden = true,
+                    },
+                })
+            end, 50)
+        end,
     },
     {
         "ibhagwan/fzf-lua",
+        event = "BufEnter",
         keys = {
             { "<leader>fz", desc = "FzfLua" },
             { "<leader>fd", desc = "Find files CWD" },
@@ -36,9 +42,10 @@ return {
             { "<leader>ef", desc = "FZF files in typed dir" },
             { "<leader>eg", desc = "FZF grep in typed dir" },
         },
-
         config = function()
-            require("tools.fzf")
+            vim.defer_fn(function()
+                require("tools.fzf")
+            end, 50)
         end,
     },
     {

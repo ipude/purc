@@ -59,6 +59,7 @@ vim.o.showtabline = 2
 vim.o.scrolloff = 8
 vim.o.sidescrolloff = 8
 vim.opt.fillchars:append({ eob = " " })
+vim.o.laststatus = 3
 -- ================================================
 -- Bell
 -- ================================================

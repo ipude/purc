@@ -43,7 +43,7 @@ return {
                     end,
                 })
 
-            end, 50)
+            end, 0)
         end,
     },
 }

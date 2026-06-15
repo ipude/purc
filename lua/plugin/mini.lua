@@ -25,6 +25,22 @@ return {
         end,
     },
     {
+        "echasnovski/mini.icons",
+        version = false,
+        event = "VeryLazy",
+        config = function()
+            require("mini.icons").setup()
+        end,
+    },
+    {
+        "echasnovski/mini.tabline",
+        version = false,
+        event = "VeryLazy",
+        config = function()
+            require("mini.mini_bufferline")
+        end,
+    },
+    {
         "echasnovski/mini.move",
         keys = {
             { "<A-Left>", mode = { "n", "v" } },
@@ -48,22 +64,6 @@ return {
                     reindent_linewise = true,
                 },
             })
-        end,
-    },
-    {
-        "echasnovski/mini.icons",
-        version = false,
-        event = "VeryLazy",
-        config = function()
-            require("mini.icons").setup()
-        end,
-    },
-    {
-        "echasnovski/mini.tabline",
-        version = false,
-        event = "VeryLazy",
-        config = function()
-            require("mini.mini_bufferline")
         end,
     },
 

@@ -51,15 +51,37 @@ local function fzf()
             },
         })
 
-        require('fzf-lua').register_ui_select()
+        vim.ui.select = function(items, opts, on_choice)
+            require('fzf-lua').fzf_exec(items, {
+                prompt = (opts and opts.prompt) or 'Select: ',
+                fzf_opts = { ['--no-multi'] = true },
+                actions = {
+                    ['default'] = function(selected)
+                        if not selected or #selected == 0 then
+                            on_choice(nil, nil)
+                            return
+                        end
+                        local display = selected[1]
+                        for i, item in ipairs(items) do
+                            local label = opts and opts.format_item and opts.format_item(item) or tostring(item)
+                            if label == display then
+                                on_choice(item, i)
+                                return
+                            end
+                        end
+                        on_choice(nil, nil)
+                    end,
+                },
+            })
+        end
 
         vim.ui.input = function(opts, on_confirm)
             local prompt  = opts.prompt or 'Input: '
             local default = opts.default or ''
 
-            local buf     = vim.api.nvim_create_buf(false, true)
-            local width   = math.max(40, #prompt + #default + 10)
-            local win     = vim.api.nvim_open_win(buf, true, {
+            local buf   = vim.api.nvim_create_buf(false, true)
+            local width = math.max(40, #prompt + #default + 10)
+            local win   = vim.api.nvim_open_win(buf, true, {
                 relative  = 'cursor',
                 row       = 1,
                 col       = 0,
@@ -89,10 +111,10 @@ local function fzf()
             end
 
             local map_opts = { buffer = buf, nowait = true }
-            vim.keymap.set('i', '<CR>', function() close(true) end, map_opts)
+            vim.keymap.set('i', '<CR>',  function() close(true)  end, map_opts)
             vim.keymap.set('i', '<C-c>', function() close(false) end, map_opts)
             vim.keymap.set('n', '<Esc>', function() close(false) end, map_opts)
-            vim.keymap.set('n', '<CR>', function() close(true) end, map_opts)
+            vim.keymap.set('n', '<CR>',  function() close(true)  end, map_opts)
         end
     end
     return require('fzf-lua')
@@ -101,19 +123,27 @@ end
 -- ============================
 -- Bootstrap vim.ui overrides
 -- ============================
--- These shims replace vim.ui.select and vim.ui.input immediately at startup
--- (no plugin loaded yet). On first call, they trigger fzf() which loads
--- fzf-lua, sets up everything, and replaces these shims with real handlers.
--- Second call onwards goes directly to the real handlers.
+do
+    local _select = vim.ui.select
+    vim.ui.select = function(...)
+        local args = { ... }
+        fzf()
+        if vim.ui.select ~= _select then
+            vim.ui.select(unpack(args))
+        else
+            _select(unpack(args))
+        end
+    end
 
-vim.ui.select = function(...)
-    fzf()
-    vim.ui.select(...)
-end
-
-vim.ui.input = function(opts, on_confirm)
-    fzf()
-    vim.ui.input(opts, on_confirm)
+    local _input = vim.ui.input
+    vim.ui.input = function(opts, on_confirm)
+        fzf()
+        if vim.ui.input ~= _input then
+            vim.ui.input(opts, on_confirm)
+        else
+            _input(opts, on_confirm)
+        end
+    end
 end
 
 -- ============================
@@ -135,22 +165,19 @@ end
 -- Keymaps
 -- ============================
 local k = vim.keymap.set
-k('n', '<leader>fz', function()
-    fzf().setup_called = true; vim.cmd('FzfLua')
-end, { desc = 'FzfLua' })
-k('n', '<leader>fd', function() fzf().files() end, { desc = 'Find files CWD' })
-k('n', '<leader>fo', function() fzf().oldfiles() end, { desc = 'Recent files' })
-k('n', '<leader>fc',
-    function() fzf().files({ cwd = vim.fn.expand('$MYVIMRC'):match('(.*/)'), prompt = '< Neovim Config > ' }) end,
-    { desc = 'Find config files' })
+k('n', '<leader>fz',  function() fzf().setup_called = true; vim.cmd('FzfLua') end, { desc = 'FzfLua' })
+k('n', '<leader>fd',  function() fzf().files() end,    { desc = 'Find files CWD' })
+k('n', '<leader>fo',  function() fzf().oldfiles() end, { desc = 'Recent files' })
+k('n', '<leader>fc',  function()
+    fzf().files({ cwd = vim.fn.expand('$MYVIMRC'):match('(.*/)'), prompt = '< Neovim Config > ' })
+end, { desc = 'Find config files' })
 k('n', '<leader>fih', function() fzf().files({ cwd = sys_home() }) end, { desc = 'Find Files in HOME' })
 k('n', '<leader>fir', function() fzf().files({ cwd = sys_root() }) end, { desc = 'Find Files in ROOT' })
-k('n', '<leader>dw', function() fzf().diagnostics_workspace() end, { desc = 'Workspace diagnostics' })
-k('n', '<leader>gd', function() fzf().live_grep({ prompt = 'GrepCwd: ' }) end, { desc = 'Live grep CWD' })
-k('n', '<leader>gc', function() fzf().live_grep({ cwd = vim.fn.stdpath('config'), prompt = 'GrepConfig: ' }) end,
-    { desc = 'Grep config' })
-k('n', '<leader>gih', function() fzf().live_grep({ cwd = sys_home(), prompt = 'GrepHome/' }) end, { desc = 'Grep home' })
-k('n', '<leader>gir', function() fzf().live_grep({ cwd = sys_root(), prompt = 'GrepRoot/' }) end, { desc = 'Grep root' })
+k('n', '<leader>dw',  function() fzf().diagnostics_workspace() end,     { desc = 'Workspace diagnostics' })
+k('n', '<leader>gd',  function() fzf().live_grep({ prompt = 'GrepCwd: ' }) end,                                    { desc = 'Live grep CWD' })
+k('n', '<leader>gc',  function() fzf().live_grep({ cwd = vim.fn.stdpath('config'), prompt = 'GrepConfig: ' }) end, { desc = 'Grep config' })
+k('n', '<leader>gih', function() fzf().live_grep({ cwd = sys_home(), prompt = 'GrepHome/' }) end,                  { desc = 'Grep home' })
+k('n', '<leader>gir', function() fzf().live_grep({ cwd = sys_root(), prompt = 'GrepRoot/' }) end,                  { desc = 'Grep root' })
 
 local function fzf_in_custom_dir(mode)
     mode = mode or 'files'
@@ -167,12 +194,12 @@ local function fzf_in_custom_dir(mode)
             return
         end
         if mode == 'files' then
-            require('fzf-lua').files({ cwd = path })
+            fzf().files({ cwd = path })
         elseif mode == 'grep' then
-            require('fzf-lua').live_grep({ cwd = path })
+            fzf().live_grep({ cwd = path })
         end
     end)
 end
 
 k('n', '<leader>ef', function() fzf_in_custom_dir('files') end, { desc = 'FZF files in typed dir' })
-k('n', '<leader>eg', function() fzf_in_custom_dir('grep') end, { desc = 'FZF grep in typed dir' })
+k('n', '<leader>eg', function() fzf_in_custom_dir('grep') end,  { desc = 'FZF grep in typed dir' })
