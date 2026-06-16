@@ -343,7 +343,7 @@ function M.setup(opts)
     setup_highlights()
     vim.api.nvim_create_autocmd("ColorScheme", { callback = setup_highlights })
 
-    vim.keymap.set("n", opts.keymap or "<End>", function()
+    vim.keymap.set("n", opts.keymap or "<S-End>", function()
         if is_open() then
             close()
         elseif mode == "tab" then
@@ -352,14 +352,6 @@ function M.setup(opts)
             open_hsplit(height)
         end
     end, { silent = true, desc = "Toggle Diagnostic Panel" })
-
-    vim.keymap.set("n", opts.keymap_workspace or "<S-End>", function()
-        vim.notify(
-            "Workspace diagnostics not supported. Use Trouble.nvim for a project-wide view.",
-            vim.log.levels.INFO,
-            { title = "Diagnostic Panel" }
-        )
-    end, { silent = true, desc = "Workspace diagnostics (unavailable)" })
 end
 
 return M
