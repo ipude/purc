@@ -6,8 +6,8 @@ Golang Vim is a personal neovim 0.12.1 tuned config.
 
 | Platform | URL |
 |----------|-----|
-| GitHub   | https://github.com/anoninus/govim |
-| GitLab   | https://gitlab.com/anoninusxt/govim |
+| GitHub   | https://github.com/anoninus/nvim |
+| GitLab   | https://gitlab.com/anoninusxt/nvim |
 
 ## Clone
 
