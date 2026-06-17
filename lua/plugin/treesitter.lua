@@ -21,6 +21,10 @@ return {
             "python",
             "html",
             "css",
+            "rust",
+            "json",
+            "markdown",
+            "toml",
           })
           :wait(300000)
 

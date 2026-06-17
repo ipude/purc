@@ -31,10 +31,10 @@ vim.o.confirm = true
 -- ================================================
 vim.o.startofline = false
 vim.o.breakindent = true
-vim.o.tabstop = 4
-vim.o.shiftwidth = 4
-vim.o.softtabstop = 4
-vim.o.expandtab = true
+vim.o.tabstop = 2        -- Changed from 4
+vim.o.shiftwidth = 2     -- Changed from 4
+vim.o.softtabstop = 2    -- Changed from 4
+vim.o.expandtab = true   -- Keeps this as spaces (not tabs)
 vim.keymap.set("n", "<Up>", "g<Up>")
 vim.keymap.set("n", "<Down>", "g<Down>")
 -- ================================================
