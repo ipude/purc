@@ -6,22 +6,22 @@ local M = {}
 -- Default configuration
 M.config = {
   enabled = true,
-  allow = { 'all' },   -- {"rust", "python", "lua"} or {"all"}
-  disallow = {},       -- Disallowed by default
+  allow = { "all" }, -- {"rust", "python", "lua"} or {"all"}
+  disallow = {}, -- Disallowed by default
   -- disallow = { "c", "cpp" }, -- Disallowed by default
-  speed = 100,         -- Delay in milliseconds (0 for instant)
-  mode = 'n',          -- normal mode only
+  speed = 100, -- Delay in milliseconds (0 for instant)
+  mode = "n", -- normal mode only
 
   -- Advanced options
-  format_on_save = true,         -- Trigger formatting (Conform/LSP)
-  reload_diagnostics = false,    -- Reload diagnostics after save
-  debounce = true,               -- Use debouncing to avoid excessive saves
-  notify = false,                -- Show notification on autosave
-  exclude_ft_from_format = {},   -- Filetypes to skip formatting: {"markdown", "text"}
+  format_on_save = true, -- Trigger formatting (Conform/LSP)
+  reload_diagnostics = false, -- Reload diagnostics after save
+  debounce = true, -- Use debouncing to avoid excessive saves
+  notify = false, -- Show notification on autosave
+  exclude_ft_from_format = {}, -- Filetypes to skip formatting: {"markdown", "text"}
 
   -- Integration settings
-  use_conform = true,      -- Use conform.nvim if available
-  use_lsp_format = true,   -- Fallback to LSP formatting
+  use_conform = true, -- Use conform.nvim if available
+  use_lsp_format = true, -- Fallback to LSP formatting
 }
 
 -- State
@@ -34,13 +34,13 @@ local is_saving = false
 local function is_filetype_allowed()
   local ft = vim.bo.filetype
 
-  if ft == '' then
+  if ft == "" then
     return false
   end
 
   -- Check disallow list first
   for _, disallowed in ipairs(M.config.disallow) do
-    if disallowed == 'all' then
+    if disallowed == "all" then
       return false
     end
     if ft == disallowed then
@@ -50,7 +50,7 @@ local function is_filetype_allowed()
 
   -- Check allow list
   for _, allowed in ipairs(M.config.allow) do
-    if allowed == 'all' then
+    if allowed == "all" then
       return true
     end
     if ft == allowed then
@@ -81,7 +81,7 @@ local function can_save_buffer()
 
   -- Check if buffer has a valid filename
   local filename = vim.api.nvim_buf_get_name(bufnr)
-  if filename == '' or filename:match('^term://') then
+  if filename == "" or filename:match("^term://") then
     return false
   end
 
@@ -100,7 +100,7 @@ local function can_save_buffer()
   if M.config.debounce then
     local current_time = vim.loop.hrtime()
     local last_time = last_save_time[bufnr] or 0
-    local time_diff = (current_time - last_time) / 1e6     -- Convert to ms
+    local time_diff = (current_time - last_time) / 1e6 -- Convert to ms
 
     if time_diff < M.config.speed then
       return false
@@ -134,7 +134,7 @@ local function format_buffer(bufnr)
 
   -- Try conform.nvim first
   if M.config.use_conform then
-    local ok, conform = pcall(require, 'conform')
+    local ok, conform = pcall(require, "conform")
     if ok then
       conform.format({
         bufnr = bufnr,
@@ -186,7 +186,7 @@ local function autosave()
 
   -- Save the buffer (this triggers BufWritePre, BufWritePost, etc.)
   local success = pcall(function()
-    vim.cmd('silent write')
+    vim.cmd("silent write")
   end)
 
   if success then
@@ -205,8 +205,8 @@ local function autosave()
 
     -- Show notification if configured
     if M.config.notify then
-      vim.notify('Autosaved: ' .. vim.fn.expand('%:t'), vim.log.levels.INFO, {
-        title = 'Autosave',
+      vim.notify("Autosaved: " .. vim.fn.expand("%:t"), vim.log.levels.INFO, {
+        title = "Autosave",
         timeout = 500,
       })
     end
@@ -239,10 +239,10 @@ local function setup_autocmds()
     vim.api.nvim_del_augroup_by_id(autocmd_id)
   end
 
-  autocmd_id = vim.api.nvim_create_augroup('AutosaveIntegrated', { clear = true })
+  autocmd_id = vim.api.nvim_create_augroup("AutosaveIntegrated", { clear = true })
 
   -- Trigger on text changes
-  vim.api.nvim_create_autocmd({ 'TextChanged', 'TextChangedI' }, {
+  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
     group = autocmd_id,
     callback = function()
       if M.config.enabled and not is_saving then
@@ -252,7 +252,7 @@ local function setup_autocmds()
   })
 
   -- Additional trigger on leaving insert mode
-  vim.api.nvim_create_autocmd('InsertLeave', {
+  vim.api.nvim_create_autocmd("InsertLeave", {
     group = autocmd_id,
     callback = function()
       if M.config.enabled and not is_saving then
@@ -262,7 +262,7 @@ local function setup_autocmds()
   })
 
   -- Clean up last_save_time on buffer delete
-  vim.api.nvim_create_autocmd('BufDelete', {
+  vim.api.nvim_create_autocmd("BufDelete", {
     group = autocmd_id,
     callback = function(args)
       last_save_time[args.buf] = nil
@@ -275,9 +275,9 @@ function M.toggle()
   M.config.enabled = not M.config.enabled
 
   if M.config.enabled then
-    vim.notify('Autosave enabled (with formatting)', vim.log.levels.INFO)
+    vim.notify("Autosave enabled (with formatting)", vim.log.levels.INFO)
   else
-    vim.notify('Autosave disabled', vim.log.levels.INFO)
+    vim.notify("Autosave disabled", vim.log.levels.INFO)
     if timer then
       timer:stop()
       timer = nil
@@ -288,28 +288,22 @@ end
 -- Toggle formatting on autosave
 function M.toggle_format()
   M.config.format_on_save = not M.config.format_on_save
-  vim.notify(
-    'Autosave formatting: ' .. (M.config.format_on_save and 'enabled' or 'disabled'),
-    vim.log.levels.INFO
-  )
+  vim.notify("Autosave formatting: " .. (M.config.format_on_save and "enabled" or "disabled"), vim.log.levels.INFO)
 end
 
 -- Toggle notifications
 function M.toggle_notify()
   M.config.notify = not M.config.notify
-  vim.notify(
-    'Autosave notifications: ' .. (M.config.notify and 'enabled' or 'disabled'),
-    vim.log.levels.INFO
-  )
+  vim.notify("Autosave notifications: " .. (M.config.notify and "enabled" or "disabled"), vim.log.levels.INFO)
 end
 
 -- Get status for statusline
 function M.status()
   if not M.config.enabled then
-    return ''
+    return ""
   end
 
-  local icon = M.config.format_on_save and '💾✨' or '💾'
+  local icon = M.config.format_on_save and "💾✨" or "💾"
   return icon
 end
 
@@ -317,21 +311,21 @@ end
 function M.setup(opts)
   -- Merge user config with defaults
   if opts then
-    M.config = vim.tbl_deep_extend('force', M.config, opts)
+    M.config = vim.tbl_deep_extend("force", M.config, opts)
   end
 
   -- Setup autocmds
   setup_autocmds()
 
   -- Create user commands
-  vim.api.nvim_create_user_command('AutosaveToggle', M.toggle, {})
-  vim.api.nvim_create_user_command('AutosaveToggleFormat', M.toggle_format, {})
-  vim.api.nvim_create_user_command('AutosaveToggleNotify', M.toggle_notify, {})
+  vim.api.nvim_create_user_command("AutosaveToggle", M.toggle, {})
+  vim.api.nvim_create_user_command("AutosaveToggleFormat", M.toggle_format, {})
+  vim.api.nvim_create_user_command("AutosaveToggleNotify", M.toggle_notify, {})
 
   -- Setup keybindings
-  vim.keymap.set('n', 'U', M.toggle, {
-    desc = 'Toggle Autosave',
-    silent = true
+  vim.keymap.set("n", "U", M.toggle, {
+    desc = "Toggle Autosave",
+    silent = true,
   })
 end
 

@@ -1,14 +1,14 @@
-vim.lsp.config('pyright', {
-  cmd       = { 'pyright-langserver', '--stdio' },
-  filetypes = { 'python' },
-  settings  = {
+vim.lsp.config("pyright", {
+  cmd = { "pyright-langserver", "--stdio" },
+  filetypes = { "python" },
+  settings = {
     python = {
       analysis = {
-        autoSearchPaths    = true,
+        autoSearchPaths = true,
         useLibraryCodeForTypes = true,
-        diagnosticMode     = 'workspace', -- or 'openFilesOnly'
+        diagnosticMode = "workspace", -- or 'openFilesOnly'
       },
     },
   },
 })
-vim.lsp.enable('pyright')
+vim.lsp.enable("pyright")

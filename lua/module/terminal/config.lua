@@ -54,10 +54,7 @@ end
 local function with_escape(mode, fn)
   return function()
     if mode == "i" or mode == "t" then
-      vim.api.nvim_feedkeys(
-        vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true),
-        "n", false
-      )
+      vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true), "n", false)
       vim.schedule(fn)
     else
       fn()
@@ -74,7 +71,6 @@ end
 -------------------------------------------------------------------------------
 vim.api.nvim_create_autocmd("TermOpen", {
   callback = function(ev)
-    vim.keymap.set("t", "<S-Tab>", "<C-\\><C-n>",
-      { buffer = ev.buf, desc = "Exit terminal mode" })
+    vim.keymap.set("t", "<S-Tab>", "<C-\\><C-n>", { buffer = ev.buf, desc = "Exit terminal mode" })
   end,
 })

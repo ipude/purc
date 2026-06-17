@@ -4,87 +4,87 @@ local miniclue = require("mini.clue")
 -- SETUP
 -- ============================================
 miniclue.setup({
-    -- Delay before the clue window appears (ms)
-    window = {
-        delay = 50,
-        config = {
-            border = "rounded",
-            -- winblend = 0 is the default, omit if not needed
-        },
+  -- Delay before the clue window appears (ms)
+  window = {
+    delay = 50,
+    config = {
+      border = "rounded",
+      -- winblend = 0 is the default, omit if not needed
     },
+  },
 
-    -- Triggers: which key presses activate the clue popup
-    triggers = {
-        -- Leader key (normal, visual, operator-pending)
-        { mode = "n", keys = "<Leader>" },
-        { mode = "x", keys = "<Leader>" },
-        { mode = "o", keys = "<Leader>" },
+  -- Triggers: which key presses activate the clue popup
+  triggers = {
+    -- Leader key (normal, visual, operator-pending)
+    { mode = "n", keys = "<Leader>" },
+    { mode = "x", keys = "<Leader>" },
+    { mode = "o", keys = "<Leader>" },
 
-        -- Built-in useful triggers
-        { mode = "n", keys = "g" },
-        { mode = "x", keys = "g" },
-        { mode = "n", keys = "[" },
-        { mode = "n", keys = "]" },
-        { mode = "n", keys = "<C-w>" },
-        { mode = "n", keys = "z" },
-        { mode = "x", keys = "z" },
-        { mode = "i", keys = "<C-x>" },
-        { mode = "n", keys = "'" },
-        { mode = "n", keys = "`" },
-        { mode = "n", keys = '"' },
-        { mode = "i", keys = "<C-r>" },
-        { mode = "c", keys = "<C-r>" },
-        { mode = "x", keys = "[" },
-        { mode = "x", keys = "]" },
-    },
+    -- Built-in useful triggers
+    { mode = "n", keys = "g" },
+    { mode = "x", keys = "g" },
+    { mode = "n", keys = "[" },
+    { mode = "n", keys = "]" },
+    { mode = "n", keys = "<C-w>" },
+    { mode = "n", keys = "z" },
+    { mode = "x", keys = "z" },
+    { mode = "i", keys = "<C-x>" },
+    { mode = "n", keys = "'" },
+    { mode = "n", keys = "`" },
+    { mode = "n", keys = '"' },
+    { mode = "i", keys = "<C-r>" },
+    { mode = "c", keys = "<C-r>" },
+    { mode = "x", keys = "[" },
+    { mode = "x", keys = "]" },
+  },
 
-    clues = {
-        -- Built-in clue generators
-        miniclue.gen_clues.builtin_completion(),
-        miniclue.gen_clues.g(),
-        miniclue.gen_clues.marks(),
-        miniclue.gen_clues.registers(),
-        miniclue.gen_clues.windows(),
-        miniclue.gen_clues.z(),
-        miniclue.gen_clues.square_brackets(),
+  clues = {
+    -- Built-in clue generators
+    miniclue.gen_clues.builtin_completion(),
+    miniclue.gen_clues.g(),
+    miniclue.gen_clues.marks(),
+    miniclue.gen_clues.registers(),
+    miniclue.gen_clues.windows(),
+    miniclue.gen_clues.z(),
+    miniclue.gen_clues.square_brackets(),
 
-        -- ============================================
-        -- TOP-LEVEL GROUP DEFINITIONS
-        -- ============================================
-        { mode = "n", keys = "<Leader>b", desc = "󰓩 Buffers" },
-        { mode = "n", keys = "<Leader>c", desc = "󱘗 Filetype Commands" },
-        { mode = "n", keys = "<Leader>d", desc = "󰃤 Diagnostics" },
-        { mode = "n", keys = "<Leader>e", desc = "󰍉 Fzf Flexible" },
-        { mode = "n", keys = "<Leader>f", desc = "󰍉 Find Files" },
-        { mode = "n", keys = "<Leader>g", desc = "󰍉 Grep" },
-        { mode = "n", keys = "<Leader>n", desc = "󰊢 Neogit" },
-        { mode = "n", keys = "<Leader>h", desc = "󰋚 History" },
-        { mode = "n", keys = "<Leader>l", desc = "󰒲 Lazy / LSP" },
-        { mode = "n", keys = "<Leader>o", desc = "󰇥 Yazi" },
-        { mode = "n", keys = "<Leader>p", desc = "󰅇 Paste" },
-        { mode = "n", keys = "<Leader>q", desc = "󰗼 Quit" },
-        { mode = "n", keys = "<Leader>r", desc = "󰑓 Reload" },
-        { mode = "n", keys = "<Leader>s", desc = "󰆓 Sessions" },
-        { mode = "n", keys = "<Leader>t", desc = "󰉿 Format" },
-        { mode = "n", keys = "<Leader>u", desc = "󰔡 Toggles" },
-        { mode = "n", keys = "<Leader>w", desc = "󰆓 Advanced Save" },
-        { mode = "n", keys = "<Leader>y", desc = "󰅎 Yank" },
-        { mode = "n", keys = "<Leader>z", desc = "󱐋 Code Runner" },
+    -- ============================================
+    -- TOP-LEVEL GROUP DEFINITIONS
+    -- ============================================
+    { mode = "n", keys = "<Leader>b", desc = "󰓩 Buffers" },
+    { mode = "n", keys = "<Leader>c", desc = "󱘗 Filetype Commands" },
+    { mode = "n", keys = "<Leader>d", desc = "󰃤 Diagnostics" },
+    { mode = "n", keys = "<Leader>e", desc = "󰍉 Fzf Flexible" },
+    { mode = "n", keys = "<Leader>f", desc = "󰍉 Find Files" },
+    { mode = "n", keys = "<Leader>g", desc = "󰍉 Grep" },
+    { mode = "n", keys = "<Leader>n", desc = "󰊢 Neogit" },
+    { mode = "n", keys = "<Leader>h", desc = "󰋚 History" },
+    { mode = "n", keys = "<Leader>l", desc = "󰒲 Lazy / LSP" },
+    { mode = "n", keys = "<Leader>o", desc = "󰇥 Yazi" },
+    { mode = "n", keys = "<Leader>p", desc = "󰅇 Paste" },
+    { mode = "n", keys = "<Leader>q", desc = "󰗼 Quit" },
+    { mode = "n", keys = "<Leader>r", desc = "󰑓 Reload" },
+    { mode = "n", keys = "<Leader>s", desc = "󰆓 Sessions" },
+    { mode = "n", keys = "<Leader>t", desc = "󰉿 Format" },
+    { mode = "n", keys = "<Leader>u", desc = "󰔡 Toggles" },
+    { mode = "n", keys = "<Leader>w", desc = "󰆓 Advanced Save" },
+    { mode = "n", keys = "<Leader>y", desc = "󰅎 Yank" },
+    { mode = "n", keys = "<Leader>z", desc = "󱐋 Code Runner" },
 
-        -- ============================================
-        -- SUB-GROUP DEFINITIONS
-        -- ============================================
-        { mode = "n", keys = "<Leader>fi", desc = "󰍉 Find Files .." },
-        { mode = "n", keys = "<Leader>gi", desc = "󰊢 Grep in .." },
-        { mode = "n", keys = "<Leader>ll", desc = "󰒲 Lazy" },
-        { mode = "n", keys = "<Leader>ls", desc = "󰒍 LSP Server" },
-        { mode = "n", keys = "<Leader>qf", desc = "󰗼 Force Quit" },
-        { mode = "n", keys = "<Leader>wf", desc = "󰆓 Force Save" },
+    -- ============================================
+    -- SUB-GROUP DEFINITIONS
+    -- ============================================
+    { mode = "n", keys = "<Leader>fi", desc = "󰍉 Find Files .." },
+    { mode = "n", keys = "<Leader>gi", desc = "󰊢 Grep in .." },
+    { mode = "n", keys = "<Leader>ll", desc = "󰒲 Lazy" },
+    { mode = "n", keys = "<Leader>ls", desc = "󰒍 LSP Server" },
+    { mode = "n", keys = "<Leader>qf", desc = "󰗼 Force Quit" },
+    { mode = "n", keys = "<Leader>wf", desc = "󰆓 Force Save" },
 
-        -- Visual mode groups
-        { mode = "x", keys = "<Leader>r", desc = "󰛔 Replace" },
-        { mode = "v", keys = "<Leader>r", desc = "󰛔 Replace" },
-    },
+    -- Visual mode groups
+    { mode = "x", keys = "<Leader>r", desc = "󰛔 Replace" },
+    { mode = "v", keys = "<Leader>r", desc = "󰛔 Replace" },
+  },
 })
 -- ============================================
 -- ENABLE MINI.CLUE IN SPECIAL BUFFERS
@@ -93,22 +93,22 @@ local special_ft = { "oil", "toggleterm", "neo-tree", "lazy", "mason" }
 local special_bt = { "terminal", "acwrite", "nofile", "prompt" }
 
 local function maybe_enable(buf)
-    local ft = vim.bo[buf].filetype
-    local bt = vim.bo[buf].buftype
-    local ft_match = vim.tbl_contains(special_ft, ft)
-    local bt_match = vim.tbl_contains(special_bt, bt)
+  local ft = vim.bo[buf].filetype
+  local bt = vim.bo[buf].buftype
+  local ft_match = vim.tbl_contains(special_ft, ft)
+  local bt_match = vim.tbl_contains(special_bt, bt)
 
-    if ft_match or bt_match then
-        vim.schedule(function()
-            pcall(require("mini.clue").enable_buf_triggers, buf)
-        end)
-    end
+  if ft_match or bt_match then
+    vim.schedule(function()
+      pcall(require("mini.clue").enable_buf_triggers, buf)
+    end)
+  end
 end
 
 vim.api.nvim_create_autocmd({ "BufEnter", "FileType", "TermOpen" }, {
-    callback = function(ev)
-        maybe_enable(ev.buf)
-    end,
+  callback = function(ev)
+    maybe_enable(ev.buf)
+  end,
 })
 
 -- ============================================
@@ -118,39 +118,39 @@ vim.keymap.set("n", "<Leader>bs", "<Cmd>w<CR>", { desc = "Buffer Save [Only for 
 vim.keymap.set("n", "<Leader>bc", "<Cmd>%d<CR>", { desc = "Buffer Remove data [!RISKY!]" })
 vim.keymap.set("n", "<Leader>bd", "<Cmd>bdelete<CR>", { desc = "Buffer Close [SAFE]" })
 vim.keymap.set("n", "<Leader>bb", function()
-    require("fzf-lua").buffers()
+  require("fzf-lua").buffers()
 end, { desc = "Pick buffer" })
 -- ============================================
 -- GIT
 -- ============================================
 vim.keymap.set("n", "<leader>nf", function()
-    local cmd = "fd --hidden --no-ignore --type d --glob '.git' ~ --max-depth 5 | xargs -I{} dirname {}"
-    local repos = {}
-    vim.fn.jobstart(cmd, {
-        stdout_buffered = true,
-        on_stdout = function(_, data)
-            for _, line in ipairs(data) do
-                if line ~= "" then
-                    table.insert(repos, line)
-                end
-            end
-        end,
-        on_exit = function()
-            vim.schedule(function()
-                require("fzf-lua").fzf_exec(repos, {
-                    prompt = "  Git Repo> ",
-                    preview = "git -C {} log --oneline --color -10",
-                    actions = {
-                        ["default"] = function(selected)
-                            if selected and selected[1] then
-                                require("neogit").open({ cwd = selected[1] })
-                            end
-                        end,
-                    },
-                })
-            end)
-        end,
-    })
+  local cmd = "fd --hidden --no-ignore --type d --glob '.git' ~ --max-depth 5 | xargs -I{} dirname {}"
+  local repos = {}
+  vim.fn.jobstart(cmd, {
+    stdout_buffered = true,
+    on_stdout = function(_, data)
+      for _, line in ipairs(data) do
+        if line ~= "" then
+          table.insert(repos, line)
+        end
+      end
+    end,
+    on_exit = function()
+      vim.schedule(function()
+        require("fzf-lua").fzf_exec(repos, {
+          prompt = "  Git Repo> ",
+          preview = "git -C {} log --oneline --color -10",
+          actions = {
+            ["default"] = function(selected)
+              if selected and selected[1] then
+                require("neogit").open({ cwd = selected[1] })
+              end
+            end,
+          },
+        })
+      end)
+    end,
+  })
 end, { desc = "Git picker [Neogit]" })
 -- ============================================
 -- NOTIFICATIONS
@@ -161,10 +161,10 @@ vim.keymap.set("n", "<Leader>hn", "<Cmd>lua MiniNotify.show_history()<CR>", { de
 -- RELOAD
 -- ============================================
 vim.keymap.set(
-    "n",
-    "<Leader>rr",
-    "<Cmd>mksession! Session.vim | restart source Session.vim<CR>",
-    { desc = "Restart (Save & Restore Session)" }
+  "n",
+  "<Leader>rr",
+  "<Cmd>mksession! Session.vim | restart source Session.vim<CR>",
+  { desc = "Restart (Save & Restore Session)" }
 )
 vim.keymap.set("n", "<Leader>rs", "<Cmd>restart<CR>", { desc = "Restart Safely (Fails if Unsaved)" })
 vim.keymap.set("n", "<Leader>rf", "<Cmd>restart +qall!<CR>", { desc = "Restart & Discard Unsaved Changes" })
@@ -218,33 +218,30 @@ vim.keymap.set({ "v", "x" }, "<Leader>y", '"+y', { desc = "Yank to Clipboard" })
 -- KEYMAP CONFLICT CHECKER  (run :CheckKeymaps)
 -- ============================================
 local function check_leader_conflicts()
-    local seen = {}
-    local conflicts = {}
+  local seen = {}
+  local conflicts = {}
 
-    for _, map in ipairs(vim.api.nvim_get_keymap("n")) do
-        if map.lhs:match("^<leader>") then
-            if seen[map.lhs] then
-                table.insert(
-                    conflicts,
-                    string.format("  %-20s  %s  ←→  %s", map.lhs, seen[map.lhs], map.rhs or "?")
-                )
-            else
-                seen[map.lhs] = map.rhs or "?"
-            end
-        end
+  for _, map in ipairs(vim.api.nvim_get_keymap("n")) do
+    if map.lhs:match("^<leader>") then
+      if seen[map.lhs] then
+        table.insert(conflicts, string.format("  %-20s  %s  ←→  %s", map.lhs, seen[map.lhs], map.rhs or "?"))
+      else
+        seen[map.lhs] = map.rhs or "?"
+      end
     end
+  end
 
-    if #conflicts > 0 then
-        vim.notify(
-            "󰀪 Leader conflicts found:\n" .. table.concat(conflicts, "\n"),
-            vim.log.levels.WARN,
-            { title = "Keymap Conflicts" }
-        )
-    else
-        vim.notify("󰸞 No leader conflicts found", vim.log.levels.INFO, { title = "Keymaps" })
-    end
+  if #conflicts > 0 then
+    vim.notify(
+      "󰀪 Leader conflicts found:\n" .. table.concat(conflicts, "\n"),
+      vim.log.levels.WARN,
+      { title = "Keymap Conflicts" }
+    )
+  else
+    vim.notify("󰸞 No leader conflicts found", vim.log.levels.INFO, { title = "Keymaps" })
+  end
 end
 
 vim.api.nvim_create_user_command("CheckKeymaps", check_leader_conflicts, {
-    desc = "Check for leader keymap conflicts",
+  desc = "Check for leader keymap conflicts",
 })
