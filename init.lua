@@ -19,6 +19,7 @@ require("module")
 -- VimEnter Stuff
 -- Load at last
 require("server")
+require("lazyc.mini.tabline_motion")
 
 -- Lazy parsers
 -- priority = last
@@ -28,3 +29,5 @@ require("treesitters.lazy")
 require("lazyc.explore.oil")
 require("lazyc.explore.fzf")
 require("lazyc.mini.miniclues")
+require("lazyc.mini.icons")
+require("lazyc.mini.tabline")

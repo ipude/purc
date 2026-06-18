@@ -1,11 +1,3 @@
-require("mini.tabline").setup({
-  show_icons = true,
-  set_vim_settings = true, -- sets showtabline=2
-  tabpage_section = "right",
-})
-
--- Buffer navigation
--- All modes except operator-pending (use mode list)
 local modes = { "n", "i", "v", "c", "t" } -- normal, insert, visual, command, terminal
 
 vim.keymap.set(modes, "<PageDown>", "<cmd>bprevious<cr>", { silent = true, desc = "Previous buffer" })

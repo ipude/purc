@@ -7,32 +7,12 @@ return {
     lazy = true,
   },
   {
-    "nvim-mini/mini.indentscope",
-    version = false,
-    event = "VeryLazy",
-    config = function()
-      require("mini.mini_indentscope")
-    end,
-  },
-  {
     "echasnovski/mini.icons",
-    version = false,
-    event = "VeryLazy",
-    config = function()
-      require("mini.icons").setup()
-    end,
+    lazy = true,
   },
-  {
-    "echasnovski/mini.tabline",
-    version = false,
-    event = "VeryLazy",
-    config = function()
-      require("mini.mini_bufferline")
-    end,
-  },
-
   {
     "echasnovski/mini.move",
+    lazy = true,
     keys = {
       { "<A-h>", mode = { "n", "v" } },
       { "<A-l>", mode = { "n", "v" } },
@@ -61,6 +41,7 @@ return {
   {
     "echasnovski/mini.sessions",
     version = "*",
+    lazy = true,
     keys = {
       { "<leader>sc", desc = "session create" },
       { "<leader>ss", desc = "session save" },
