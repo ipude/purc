@@ -27,3 +27,4 @@ require("treesitters.lazy")
 -- lua/lazy/
 require("lazyc.explore.oil")
 require("lazyc.explore.fzf")
+require("lazyc.mini.miniclues")

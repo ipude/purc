@@ -4,17 +4,7 @@
 return {
   {
     "echasnovski/mini.clue",
-    event = "VeryLazy",
-    config = function()
-      require("mini.miniclues")
-    end,
-  },
-  {
-    "nvim-mini/mini.notify",
-    event = "VeryLazy",
-    config = function()
-      require("mini.mini_notify")
-    end,
+    lazy = true,
   },
   {
     "nvim-mini/mini.indentscope",
