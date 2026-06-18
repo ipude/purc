@@ -1,143 +1,69 @@
-local M = {}
+-- Define TokyoNight Moon color highlight groups
+local function set_statusline_colors()
+  local statusline_hl = vim.api.nvim_get_hl(0, { name = "StatusLine" })
+  local bg_color = statusline_hl.bg or "#222436"
 
-----------------------------------------------------------------------
--- Highlight setup: steal the `fg` from real theme groups, force bg=NONE
-----------------------------------------------------------------------
-local function fg_of(group)
-  local ok, def = pcall(vim.api.nvim_get_hl, 0, { name = group, link = false })
-  if ok and def and def.fg then
-    return string.format("#%06x", def.fg)
+  vim.api.nvim_set_hl(0, "SLFilename", { fg = "#c099ff", bg = bg_color, bold = true }) -- Purple
+  vim.api.nvim_set_hl(0, "SLLsp",      { fg = "#82a1ff", bg = bg_color })               -- Blue
+  vim.api.nvim_set_hl(0, "SLError",    { fg = "#ff757f", bg = bg_color, bold = true }) -- Red
+  vim.api.nvim_set_hl(0, "SLWarn",     { fg = "#ffc777", bg = bg_color })               -- Orange/Yellow
+  vim.api.nvim_set_hl(0, "SLHint",     { fg = "#4fd6be", bg = bg_color })               -- Teal
+  vim.api.nvim_set_hl(0, "SLInfo",     { fg = "#0db9d7", bg = bg_color })               -- Cyan
+  vim.api.nvim_set_hl(0, "SLCursor",   { fg = "#c8d3f5", bg = bg_color })               -- Foreground Text
+  vim.api.nvim_set_hl(0, "SLDefault",  { fg = "#a9b1d6", bg = bg_color })               -- Base Text
+end
+
+set_statusline_colors()
+vim.api.nvim_create_autocmd("ColorScheme", {
+  pattern = "*",
+  callback = set_statusline_colors,
+})
+
+-- Get active LSP server names
+_G.get_lsp_name = function()
+  local clients = vim.lsp.get_clients({ bufnr = 0 })
+  if #clients == 0 then return "None" end
+  local names = {}
+  for _, client in ipairs(clients) do
+    table.insert(names, client.name)
   end
-  return nil
+  return table.concat(names, ",")
 end
 
-local function set_hl(name, source_group, extra)
-  extra = extra or {}
-  vim.api.nvim_set_hl(0, name, vim.tbl_extend("force", {
-    fg = fg_of(source_group),
-    bg = "NONE",
-  }, extra))
-end
-
-local function build_highlights()
-  set_hl("StlMode",       "Function",        { bold = true })
-  set_hl("StlFile",        "Directory")
-  set_hl("StlModified",    "Number")
-  set_hl("StlRecording",   "DiagnosticError", { bold = true })
-  set_hl("StlLsp",         "Special")
-  set_hl("StlDiagError",   "DiagnosticError")
-  set_hl("StlDiagWarn",    "DiagnosticWarn")
-  set_hl("StlDiagInfo",    "DiagnosticInfo")
-  set_hl("StlDiagHint",    "DiagnosticHint")
-  set_hl("StlCursor",      "Comment")
-end
-
-----------------------------------------------------------------------
--- Mode aliases
-----------------------------------------------------------------------
-local modes = {
-  n = "N", no = "N", nov = "N", noV = "N",
-  i = "I", ic = "I", ix = "I",
-  v = "V", V = "VL", [""] = "VB",
-  R = "R", Rv = "R",
-  c = "C", cv = "EX",
-  t = "T", s = "S", S = "SL",
-}
-
-local function mode_text()
-  local m = vim.fn.mode()
-  return modes[m] or m:upper()
-end
-
-----------------------------------------------------------------------
--- Segments
-----------------------------------------------------------------------
-local function filename()
-  local name = vim.fn.expand("%:t")
-  if name == "" then name = "[No Name]" end
-  local mod = vim.bo.modified and " ●" or ""
-  return name .. "%#StlModified#" .. mod
-end
-
-local function recording()
-  local reg = vim.fn.reg_recording()
-  if reg == "" then return "" end
-  return "%#StlRecording# REC@" .. reg
-end
-
-local function lsp_count()
-  local n = #vim.lsp.get_clients({ bufnr = 0 })
-  return "%#StlLsp# LSP " .. n
-end
-
-local function diagnostics()
-  local diags = vim.diagnostic.get(0)
-  local counts = {}
-  for _, dg in ipairs(diags) do
-    counts[dg.severity] = (counts[dg.severity] or 0) + 1
-  end
-
-  local e = counts[vim.diagnostic.severity.ERROR] or 0
-  local w = counts[vim.diagnostic.severity.WARN] or 0
-  local i = counts[vim.diagnostic.severity.INFO] or 0
-  local h = counts[vim.diagnostic.severity.HINT] or 0
+-- Get diagnostic counts dynamically (only shows items > 0)
+_G.get_diagnostics = function()
+  local s = vim.diagnostic.severity
+  local e = #vim.diagnostic.get(0, { severity = s.ERROR })
+  local w = #vim.diagnostic.get(0, { severity = s.WARN })
+  local h = #vim.diagnostic.get(0, { severity = s.HINT })
+  local i = #vim.diagnostic.get(0, { severity = s.INFO })
 
   local parts = {}
-  if e > 0 then parts[#parts+1] = "%#StlDiagError# E:" .. e end  -- error
-  if w > 0 then parts[#parts+1] = "%#StlDiagWarn# W:" .. w end   -- warn
-  if i > 0 then parts[#parts+1] = "%#StlDiagInfo# I:" .. i end   -- info
-  if h > 0 then parts[#parts+1] = "%#StlDiagHint#➤ H:" .. h end  -- hint
+  if e > 0 then table.insert(parts, "%#SLError#E:" .. e) end
+  if w > 0 then table.insert(parts, "%#SLWarn#W:" .. w) end
+  if h > 0 then table.insert(parts, "%#SLHint#H:" .. h) end
+  if i > 0 then table.insert(parts, "%#SLInfo#I:" .. i) end
 
-  if #parts == 0 then return "%#StlDiagHint#OK" end
-  return table.concat(parts, "  ")
+  -- Return absolutely nothing if there are no diagnostics
+  if #parts == 0 then return "" end
+  
+  -- Return colorized severities wrapped nicely in brackets
+  return "%#SLDefault#[ " .. table.concat(parts, " ") .. " %#SLDefault#]"
 end
 
-local function cursor_pos()
-  return "%#StlCursor# %l:%c"
+-- Combine elements into a single execution generator
+_G.build_statusline = function()
+  local filename = "%#SLDefault#[%#SLFilename#%t%#SLDefault#]"
+  local lsp = "[%#SLLsp#LSP:" .. _G.get_lsp_name() .. "%#SLDefault#]"
+  local diag = _G.get_diagnostics()
+  
+  -- Cleanly space out the diagnostic block if it has content
+  local diag_str = diag ~= "" and (" " .. diag) or ""
+  local cursor = "%= %#SLCursor#%l:%c "
+
+  return filename .. " " .. lsp .. diag_str .. cursor
 end
 
-----------------------------------------------------------------------
--- Assemble
-----------------------------------------------------------------------
-function M.statusline()
-  local rec = recording()
+-- Execute the evaluation function directly for parsing highlights
+vim.o.statusline = "%!v:lua.build_statusline()"
 
-  return table.concat({
-    "%#StlMode#" .. mode_text(),
-    "   ",
-    "%#StlFile#" .. filename(),
-    rec ~= "" and ("    " .. rec) or "",
-    "%=",                          -- right-align everything after this
-    lsp_count(),
-    "    ",
-    diagnostics(),
-    "    ",
-    cursor_pos(),
-    " ",
-  })
-end
-
-----------------------------------------------------------------------
--- Public setup
-----------------------------------------------------------------------
-function M.setup()
-  vim.o.laststatus = 3
-  build_highlights()
-  vim.o.statusline = "%!v:lua.require'ui.statusline'.statusline()"
-
-  local group = vim.api.nvim_create_augroup("CustomStatusline", { clear = true })
-
-  vim.api.nvim_create_autocmd("ColorScheme", {
-    group = group,
-    callback = build_highlights,
-  })
-
-  vim.api.nvim_create_autocmd(
-    { "RecordingEnter", "RecordingLeave", "LspAttach", "LspDetach", "DiagnosticChanged" },
-    {
-      group = group,
-      callback = function() vim.cmd("redrawstatus") end,
-    }
-  )
-end
-return M
