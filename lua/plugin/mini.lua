@@ -11,31 +11,52 @@ return {
     lazy = true,
   },
   {
-    "echasnovski/mini.move",
-    lazy = true,
-    keys = {
-      { "<A-h>", mode = { "n", "v" } },
-      { "<A-l>", mode = { "n", "v" } },
-      { "<A-j>", mode = { "n", "v" } },
-      { "<A-k>", mode = { "n", "v" } },
-    },
+    "echasnovski/mini.tabline",
+    version = "*", -- Use stable release
+    event = "VimEnter",
     config = function()
-      require("mini.move").setup({
-        mappings = {
-          left = "<A-h>",
-          right = "<A-l>",
-          down = "<A-j>",
-          up = "<A-k>",
-          line_left = "<A-h>",
-          line_right = "<A-l>",
-          line_down = "<A-j>",
-          line_up = "<A-k>",
-        },
-        options = {
-          reindent_linewise = true,
-        },
+      require("mini.tabline").setup({
+        show_icons = true, -- Set false to disable icons
+        format = nil, -- Uses default format function
       })
     end,
+  },
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    lazy = true,
+  },
+  {
+    "echasnovski/mini.indentscope",
+    lazy = true,
+  },
+  {
+    {
+      "echasnovski/mini.move",
+      lazy = true,
+      keys = {
+        { "<A-h>", mode = { "n", "v" } },
+        { "<A-l>", mode = { "n", "v" } },
+        { "<A-j>", mode = { "n", "v" } },
+        { "<A-k>", mode = { "n", "v" } },
+      },
+      config = function()
+        require("mini.move").setup({
+          mappings = {
+            left = "<A-h>",
+            right = "<A-l>",
+            down = "<A-j>",
+            up = "<A-k>",
+            line_left = "<A-h>",
+            line_right = "<A-l>",
+            line_down = "<A-j>",
+            line_up = "<A-k>",
+          },
+          options = {
+            reindent_linewise = true,
+          },
+        })
+      end,
+    },
   },
 
   {

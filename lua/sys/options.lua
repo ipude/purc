@@ -68,18 +68,30 @@ vim.o.errorbells = false
 -- ================================================
 -- Clipboard (fallback for termux)
 -- ================================================
-
 local is_termux = os.getenv("TERMUX_VERSION") ~= nil
 
 local function smart_copy_register(reg)
-  local text = vim.fn.getreg(reg)
-  
-  -- If Termux AND bytes > 6000, use termux-clipboard-set
-  if is_termux and #text > 6000 then
-    vim.fn.system("termux-clipboard-set", text)
+  -- Natively fetch register contents as an array of lines
+  local lines = vim.fn.getreg(reg, 1, 1)
+  local text = table.concat(lines, "\n")
+  local text_size = #text
+
+  if is_termux then
+    if text_size > 800000 then
+      -- Android Binder IPC crash protection (Hard 1MB limit)
+      local size_mb = string.format("%.2f", text_size / 1024 / 1024)
+      vim.notify("Yanked " .. size_mb .. "MB. Too large for Android clipboard. Kept inside Neovim.", vim.log.levels.WARN)
+      return
+    elseif text_size > 6000 then
+      -- Explicitly use Termux binary for medium chunks
+      vim.fn.system("termux-clipboard-set", text)
+    else
+      -- FORCE genuine native OSC 52 sequences (Only passes lines)
+      require('vim.ui.clipboard.osc52').copy('+')(lines)
+    end
   else
-    -- Otherwise use Neovim's native clipboard (OSC 52)
-    vim.fn.setreg("+", text)
+    -- Desktop fallback
+    require('vim.ui.clipboard.osc52').copy('+')(lines)
   end
 end
 
@@ -88,16 +100,17 @@ vim.keymap.set("n", "<leader>yc", function()
 end, { desc = "Copy yank register to system clipboard" })
 
 vim.keymap.set("v", "<leader>yt", function()
-  smart_copy_register('"')
+  -- gv re-selects the visual area
+  -- 'y' yanks the selection instead of cutting it
+  vim.cmd('normal! gv"yy')
+  smart_copy_register('y')
 end, { desc = "Copy visual selection to system clipboard" })
 
 vim.keymap.set("n", "<leader>ym", function()
-  -- For motion: copy operator
-  local text = vim.fn.getreg('"')
   smart_copy_register('"')
 end, { desc = "Copy motion to system clipboard" })
 
--- Enable Neovim's clipboard
+-- Enable Neovim's clipboard only outside Termux
 if not is_termux then
   vim.opt.clipboard = "unnamedplus"  -- Desktop: use system clipboard
 end
