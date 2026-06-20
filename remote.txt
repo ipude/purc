@@ -1,5 +1,13 @@
-git remote add github git@github.com:pudep/nvim.git
-git remote add gitlab git@gitlab.com:pudep/nvim.git
+git remote remove github
+git remote remove gitlab
 
-git remote set-url --add --push github git@github.com:pudep/nvim.git
-git remote set-url --add --push gitlab git@gitlab.com:pudep/nvim.git
+# Add origin with github as fetch URL
+git remote add origin git@github.com:pudep/nvim.git
+
+# Add gitlab as second push URL
+git remote set-url --add --push origin git@github.com:pudep/nvim.git
+git remote set-url --add --push origin git@gitlab.com:pudep/nvim.git
+
+# Fetch and set upstream
+git fetch origin
+git branch --set-upstream-to=origin/main main
