@@ -18,8 +18,10 @@ return {
         transparent = false,
         terminal_colors = true,
         dim_inactive = false,
+        on_highlights = function(hl, c)
+          hl.Comment = { fg = "#809ab0", italic = false }
+        end,
       })
-
       vim.cmd.colorscheme("tokyonight-moon")
     end,
   },

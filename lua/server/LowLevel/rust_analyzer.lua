@@ -6,17 +6,17 @@ vim.lsp.config("rust_analyzer", {
   single_file_support = false,
   settings = {
     ["rust-analyzer"] = {
-      cargo = { allFeatures = false, buildScripts = { enable = false }, loadOutDirsFromCheck = true },
-      check = { command = "clippy", extraArgs = { "--no-deps" } },
-      procMacro = { enable = true, attributes = { enable = true } },
+      cargo = { allFeatures = false, buildScripts = { enable = false }, loadOutDirsFromCheck = false },
+      check = { command = "check", extraArgs = { "--no-deps" } },
+      procMacro = { enable = false, attributes = { enable = false } },
       diagnostics = {
         enable = true,
         refresh = { workspace = { enable = false } },
         disabled = { "unresolved-proc-macro", "unresolved-macro-call" },
         experimental = { enable = false },
       },
-      cachePriming = { enable = true, numThreads = 2 },
-      checkOnSave = true,
+      cachePriming = { enable = false},
+      checkOnSave = false,
       files = { excludeDirs = { ".git" }, watcher = "client" },
     },
   },
