@@ -1,0 +1,5 @@
+git remote add github git@github.com:pudep/nvim.git
+git remote add gitlab git@gitlab.com:pudep/nvim.git
+
+git remote set-url --add --push github git@github.com:pudep/nvim.git
+git remote set-url --add --push gitlab git@gitlab.com:pudep/nvim.git
