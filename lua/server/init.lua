@@ -8,6 +8,7 @@ local ft_servers = {
   c = "server.LowLevel.clang",
   cpp = "server.LowLevel.clang",
   rust = "server.LowLevel.rust_analyzer",
+  zig = "server.LowLevel.zls",
   json = "server.Utilities.jsonls",
   css = "server.Web.css_ls",
   scss = "server.Web.css_ls",
