@@ -1,39 +1,41 @@
+-- ================================================
+-- Disable useless stuff
+-- ================================================
 vim.g.rust_recommended_style = 0
-vim.g.go_recommended_style = 0 -- blocks forced 8-width tabs for go
-vim.g.python_recommended_style = 0 -- blocks forced pep8 spaces for python
-vim.g.zig_recommended_style = 0 -- blocks forced formatting rules for zig
-vim.g.markdown_recommended_style = 0 -- blocks forced formatting rules for zig
+vim.g.go_recommended_style = 0
+vim.g.python_recommended_style = 0
+vim.g.zig_recommended_style = 0
+vim.g.markdown_recommended_style = 0
 
--- Global list of all built-in runtime plugins to bypass
+-- Disable obsolete plugins
 local disabled_built_ins = {
-  "2html_plugin", -- Disable HTML export tools
-  "getscript", -- Disable Vim script retrieval
-  "getscriptPlugin", -- Disable remote plugin scans
-  "gzip", -- Disable zip archive processing
-  "logipat", -- Disable pattern parser utilities
-  "matchit", -- Disable heavy pair matching
-  "matchparen", -- Disable bracket rendering scans
-  "netrw", -- Disable old file browser
-  "netrwFileHandlers", -- Disable netrw system paths
-  "netrwPlugin", -- Disable netrw start hooks
-  "netrwSettings", -- Disable netrw configuration loops
-  "rrhelper", -- Disable tracking tools
-  "spellfile_plugin", -- Disable automatic spell downloads
-  "tar", -- Disable tarball file reading
-  "tarPlugin", -- Disable tar extraction commands
-  "tutor_mode_plugin", -- Disable default tutorials
-  "vimball", -- Disable archaic package formats
-  "vimballPlugin", -- Disable legacy archive unpacking
-  "zip", -- Disable zip decompression tools
-  "zipPlugin", -- Disable zip extension integrations
+  "2html_plugin",
+  "getscript",
+  "getscriptPlugin",
+  "gzip",
+  "logipat",
+  "matchit",
+  "matchparen",
+  "netrw",
+  "netrwFileHandlers",
+  "netrwPlugin",
+  "netrwSettings",
+  "rrhelper",
+  "spellfile_plugin",
+  "tar",
+  "tarPlugin",
+  "tutor_mode_plugin",
+  "vimball",
+  "vimballPlugin",
+  "zip",
+  "zipPlugin",
 }
 
 for _, plugin in ipairs(disabled_built_ins) do
   vim.g["loaded_" .. plugin] = 1
 end
-
 -- ================================================
--- Provider disable (speeds up startup)
+-- Disable useless providers
 -- ================================================
 vim.g.loaded_remote_plugins = 1
 vim.g.loaded_perl_provider = 0
@@ -41,25 +43,21 @@ vim.g.loaded_ruby_provider = 0
 vim.g.loaded_node_provider = 0
 vim.g.loaded_python3_provider = 0
 -- ================================================
--- load_first.lua
+-- Leader and keymap
 -- ================================================
--- Leader MUST be before everything else
 vim.g.mapleader = " "
 vim.g.maplocalleader = "'"
 _G.map = vim.keymap.set
-vim.o.updatetime = 300 -- not 0, that hammers swapfile/cursorhold
+-- ================================================
+-- Core 
+-- ================================================
+vim.o.updatetime = 300
 vim.o.ttimeoutlen = 0
 vim.o.timeoutlen = 300
 vim.o.swapfile = false
 vim.o.confirm = true
 -- ================================================
--- Persistant undo
--- ================================================
--- vim.opt.undofile = true
--- vim.opt.undodir = vim.fn.stdpath("state") .. "/undo"
--- vim.opt.undolevels = 1000
--- ================================================
--- Indent and Movement
+-- Indent related
 -- ================================================
 vim.o.startofline = false
 vim.o.breakindent = true
@@ -70,7 +68,7 @@ vim.o.expandtab = true -- Keeps this as spaces (not tabs)
 vim.keymap.set("n", "<Up>", "g<Up>")
 vim.keymap.set("n", "<Down>", "g<Down>")
 -- ================================================
--- UI & Display
+-- Ui related
 -- ================================================
 vim.o.cmdheight = 0
 vim.o.showcmd = false
@@ -93,64 +91,12 @@ vim.o.sidescrolloff = 8
 vim.opt.fillchars:append({ eob = " " })
 vim.o.laststatus = 3
 -- ================================================
--- Bell
+-- Keep Bells off
 -- ================================================
 vim.o.visualbell = false
 vim.o.errorbells = false
 -- ================================================
--- Clipboard (fallback for termux)
--- ================================================
-local is_termux = os.getenv("TERMUX_VERSION") ~= nil
-
-local function smart_copy_register(reg)
-  -- Natively fetch register contents as an array of lines
-  local lines = vim.fn.getreg(reg, 1, 1)
-  local text = table.concat(lines, "\n")
-  local text_size = #text
-
-  if is_termux then
-    if text_size > 800000 then
-      -- Android Binder IPC crash protection (Hard 1MB limit)
-      local size_mb = string.format("%.2f", text_size / 1024 / 1024)
-      vim.notify(
-        "Yanked " .. size_mb .. "MB. Too large for Android clipboard. Kept inside Neovim.",
-        vim.log.levels.WARN
-      )
-      return
-    elseif text_size > 6000 then
-      -- Explicitly use Termux binary for medium chunks
-      vim.fn.system("termux-clipboard-set", text)
-    else
-      -- FORCE genuine native OSC 52 sequences (Only passes lines)
-      require("vim.ui.clipboard.osc52").copy("+")(lines)
-    end
-  else
-    -- Desktop fallback
-    require("vim.ui.clipboard.osc52").copy("+")(lines)
-  end
-end
-
-vim.keymap.set("n", "<leader>yc", function()
-  smart_copy_register('"')
-end, { desc = "Copy yank register to system clipboard" })
-
-vim.keymap.set("v", "<leader>yt", function()
-  -- gv re-selects the visual area
-  -- 'y' yanks the selection instead of cutting it
-  vim.cmd('normal! gv"yy')
-  smart_copy_register("y")
-end, { desc = "Copy visual selection to system clipboard" })
-
-vim.keymap.set("n", "<leader>ym", function()
-  smart_copy_register('"')
-end, { desc = "Copy motion to system clipboard" })
-
--- Enable Neovim's clipboard only outside Termux
-if not is_termux then
-  vim.opt.clipboard = "unnamedplus" -- Desktop: use system clipboard
-end
--- ================================================
--- Syntax
+-- Keep syntax off
 -- ================================================
 vim.cmd("syntax off")
 vim.g.syntax_on = nil
