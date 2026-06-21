@@ -1,7 +1,13 @@
+-- ==========================================
+-- Pre Lsp server calls
+-- ==========================================
 require("server.diagnostic")
 require("server.lsp")
 require("server.map")
-
+require("server.log")
+-- ==========================================
+-- Lsp server require calls start from here
+-- ==========================================
 local ft_servers = {
   lua = "server.HighLevel.lua_ls",
   python = "server.HighLevel.pyright",
