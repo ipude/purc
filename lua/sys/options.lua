@@ -45,15 +45,26 @@ vim.g.loaded_python3_provider = 0
 -- ================================================
 -- Leader and keymap
 -- ================================================
+-- global leader 
 vim.g.mapleader = " "
-vim.g.maplocalleader = "'"
+
+-- gloabl alias
 _G.map = vim.keymap.set
+
+-- local leader
+vim.g.maplocalleader = "\\"
+
+-- custom leaders
+vim.keymap.set("n", ";", "<Nop>", { noremap = true })
+vim.keymap.set("n", "|", "<Nop>", { noremap = true })
+vim.keymap.set("n", "=", "<Nop>", { noremap = true })
+vim.keymap.set("n", ",", "<Nop>", { noremap = true })
 -- ================================================
 -- Core 
 -- ================================================
 vim.o.updatetime = 300
 vim.o.ttimeoutlen = 0
-vim.o.timeoutlen = 300
+vim.o.timeoutlen = 800
 vim.o.swapfile = false
 vim.o.confirm = true
 -- ================================================

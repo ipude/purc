@@ -16,6 +16,20 @@ local function setup_miniclues()
       { mode = "x", keys = "<Leader>" },
       { mode = "o", keys = "<Leader>" },
 
+      -- Local leader
+      { mode = "n", keys = "<LocalLeader>" },
+      { mode = "x", keys = "<LocalLeader>" },
+
+      -- Custom fake leaders
+      { mode = "n", keys = ";" },
+      { mode = "x", keys = ";" },
+      { mode = "n", keys = "|" },
+      { mode = "x", keys = "|" },
+      { mode = "n", keys = "=" },
+      { mode = "x", keys = "=" },
+      { mode = "n", keys = "," },
+      { mode = "x", keys = "," },
+
       -- Built-in useful triggers
       { mode = "n", keys = "g" },
       { mode = "x", keys = "g" },
