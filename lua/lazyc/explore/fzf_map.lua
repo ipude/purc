@@ -96,6 +96,12 @@ local function fzf_in_custom_dir(mode)
   end)
 end
 
+-- usage : `touch .root` at root of project (once per project)
+vim.keymap.set("n", "<leader>ff", function()
+  local root = vim.fs.root(0, {".root"})
+  require("fzf-lua").files({ cwd = root })
+end)
+
 map("n", "<leader>ef", function()
   fzf_in_custom_dir("files")
 end, { desc = "FZF files in typed dir" })
