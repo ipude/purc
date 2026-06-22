@@ -13,13 +13,7 @@ return {
   {
     "echasnovski/mini.tabline",
     version = "*", -- Use stable release
-    event = "VimEnter",
-    config = function()
-      require("mini.tabline").setup({
-        show_icons = true, -- Set false to disable icons
-        format = nil, -- Uses default format function
-      })
-    end,
+    lazy = false,
   },
   {
     "lukas-reineke/indent-blankline.nvim",

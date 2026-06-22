@@ -1,11 +1,4 @@
 -- ==========================================
--- Pre Lsp server calls
--- ==========================================
-require("server.diagnostic")
-require("server.lsp")
-require("server.map")
-require("server.log")
--- ==========================================
 -- Lsp server require calls start from here
 -- ==========================================
 local ft_servers = {
@@ -30,7 +23,17 @@ local function load_server(ft)
     require(mod)
   end
 end
-
+local lsp_core_loaded = false
+local function ensure_lsp_core()
+  if lsp_core_loaded then
+    return
+  end
+  lsp_core_loaded = true
+  require("server.diagnostic")
+  require("server.lsp")
+  require("server.map")
+  require("server.log")
+end
 vim.api.nvim_create_autocmd("VimEnter", {
   once = true,
   callback = function()
@@ -42,6 +45,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
           local ft = vim.bo[buf].filetype
           if ft_servers[ft] and not seen[ft] then
             seen[ft] = true
+            ensure_lsp_core()
             load_server(ft)
           end
         end
@@ -51,6 +55,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
       vim.api.nvim_create_autocmd("FileType", {
         pattern = vim.tbl_keys(ft_servers),
         callback = function(args)
+          ensure_lsp_core()
           load_server(args.match)
         end,
       })
