@@ -79,7 +79,9 @@ local function log_entry(raw)
     session_log[uid].occurrence = session_log[uid].occurrence + 1
     session_log[uid].timed_at   = fmt_time()
   else
-    session_log[uid] = { log = uid, timed_at = fmt_time(), occurrence = 1 }
+    -- Store `raw` (trimmed), not `uid`, so the client name is preserved
+    local display = raw:match("^%s*(.-)%s*$"):sub(1, 120)
+    session_log[uid] = { log = display, timed_at = fmt_time(), occurrence = 1 }
   end
 
   write_json()
@@ -146,7 +148,7 @@ local function toggle_buf()
   vim.keymap.set("n", "q",          "<cmd>bprev<cr>", opts)
 end
 
-vim.keymap.set("n", ";ll", toggle_buf, { noremap = true, silent = true, desc = "Toggle LSP log" })
+vim.keymap.set("n", ";ll", "<cmd>e ~/.local/share/nvim/server/log.json<cr>", { noremap = true, silent = true, desc = "Toggle LSP log" })
 
 -- LSP handlers ----------------------------------------------------------------
 
