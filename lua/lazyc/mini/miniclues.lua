@@ -67,7 +67,6 @@ local function setup_miniclues()
       { mode = "n", keys = "<Leader>e", desc = "󰍉 Fzf Flexible" },
       { mode = "n", keys = "<Leader>f", desc = "󰍉 Find Files" },
       { mode = "n", keys = "<Leader>g", desc = "󰍉 Grep" },
-      { mode = "n", keys = "<Leader>n", desc = "󰊢 Neogit" },
       { mode = "n", keys = "<Leader>h", desc = "󰋚 History" },
       { mode = "n", keys = "<Leader>l", desc = "󰒲 Lazy / LSP" },
       { mode = "n", keys = "<Leader>o", desc = "󰇥 Yazi" },
@@ -94,6 +93,8 @@ local function setup_miniclues()
       -- Visual mode groups
       { mode = "x", keys = "<Leader>r", desc = "󰛔 Replace" },
       { mode = "v", keys = "<Leader>r", desc = "󰛔 Replace" },
+
+      { mode = "n", keys = ";g", desc = "󰊢 LazyGit" },
     },
   })
   -- ============================================

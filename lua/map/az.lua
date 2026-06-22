@@ -8,38 +8,6 @@ vim.keymap.set("n", "<Leader>bb", function()
   vim.cmd("FzfLua buffers")
 end, { desc = "Pick buffer" })
 -- ============================================
--- GIT
--- ============================================
-vim.keymap.set("n", "<leader>nf", function()
-  local cmd = "fd --hidden --no-ignore --type d --glob '.git' ~ --max-depth 5 | xargs -I{} dirname {}"
-  local repos = {}
-  vim.fn.jobstart(cmd, {
-    stdout_buffered = true,
-    on_stdout = function(_, data)
-      for _, line in ipairs(data) do
-        if line ~= "" then
-          table.insert(repos, line)
-        end
-      end
-    end,
-    on_exit = function()
-      vim.schedule(function()
-        require("fzf-lua").fzf_exec(repos, {
-          prompt = "  Git Repo> ",
-          preview = "git -C {} log --oneline --color -10",
-          actions = {
-            ["default"] = function(selected)
-              if selected and selected[1] then
-                require("neogit").open({ cwd = selected[1] })
-              end
-            end,
-          },
-        })
-      end)
-    end,
-  })
-end, { desc = "Git picker [Neogit]" })
--- ============================================
 -- NOTIFICATIONS
 -- ============================================
 vim.keymap.set("n", "<Leader>hn", "<Cmd>lua MiniNotify.show_history()<CR>", { desc = "Notification History" })

@@ -114,23 +114,27 @@ return {
     },
   },
   {
-    "NeogitOrg/neogit",
+    "kdheepak/lazygit.nvim",
     lazy = true,
-    cmd = "Neogit",
-    keys = {
-      { "<leader>ng", "<cmd>Neogit<cr>", desc = "Neogit" },
-      {
-        "<leader>nc",
-        function()
-          require("neogit").open({ cwd = vim.fn.stdpath("config") })
-        end,
-        desc = "Neogit config dir",
-      },
+    cmd = {
+      "LazyGit",
+      "LazyGitConfig",
+      "LazyGitCurrentFile",
+      "LazyGitFilter",
+      "LazyGitFilterCurrentFile",
     },
     dependencies = {
-      { "nvim-lua/plenary.nvim", lazy = true },
-      { "sindrets/diffview.nvim", lazy = true },
-      { "ibhagwan/fzf-lua", lazy = true },
+      "nvim-lua/plenary.nvim",
     },
+    keys = {
+      { ";gg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+      { ";gc", "<cmd>LazyGitCurrentFile<cr>", desc = "Open Repo of current file" },
+    },
+    config = function()
+      vim.g.lazygit_floating_window_winblend = 0
+      vim.g.lazygit_floating_window_scaling_factor = 0.9
+      vim.g.lazygit_floating_window_border_chars = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
+      vim.g.lazygit_use_neovim_remote = 1 -- fallback to 0 if neovim-remote not installed
+    end,
   },
 }
