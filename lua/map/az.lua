@@ -8,11 +8,6 @@ vim.keymap.set("n", "<Leader>bb", function()
   vim.cmd("FzfLua buffers")
 end, { desc = "Pick buffer" })
 -- ============================================
--- NOTIFICATIONS
--- ============================================
-vim.keymap.set("n", "<Leader>hn", "<Cmd>lua MiniNotify.show_history()<CR>", { desc = "Notification History" })
-
--- ============================================
 -- RELOAD
 -- ============================================
 vim.keymap.set(
@@ -58,11 +53,15 @@ vim.keymap.set("n", "<Leader>yp", "<Cmd>let @+ = expand('%:p')<CR>", { desc = "Y
 -- LAZY
 -- ============================================
 vim.keymap.set("n", "<Leader>lp", "<Cmd>Lazy profile<CR>", { desc = "Profile" })
+vim.keymap.set("n", "<Leader>li", "<Cmd>Lazy install<CR>", { desc = "Install" })
+vim.keymap.set("n", "<Leader>lr", "<Cmd>Lazy restore<CR>", { desc = "Restore" })
+vim.keymap.set("n", "<Leader>ls", "<Cmd>Lazy sync<CR>", { desc = "Sync" })
+vim.keymap.set("n", "<Leader>lh", "<Cmd>Lazy home<CR>", { desc = "Home" })
+vim.keymap.set("n", "<Leader>lu", "<Cmd>Lazy update<CR>", { desc = "Update" })
 -- ============================================
 -- LSP SERVER
 -- ============================================
-vim.keymap.set("n", "<Leader>li", "<Cmd>e ~/.local/state/nvim/lsp.log<CR>", { desc = "Info" })
-vim.keymap.set("n", "<Leader>lr", "<Cmd>lsp restart<CR>", { desc = "Restart" })
+vim.keymap.set("n", ";li", "<Cmd>e ~/.local/state/nvim/lsp.log<CR>", { desc = "Lsp log" })
 
 -- ============================================
 -- VISUAL MODE

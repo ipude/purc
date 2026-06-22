@@ -62,31 +62,24 @@ local function setup_miniclues()
       -- TOP-LEVEL GROUP DEFINITIONS
       -- ============================================
       { mode = "n", keys = "<Leader>b", desc = "󰓩 Buffers" },
-      { mode = "n", keys = "<Leader>c", desc = "󱘗 Filetype Commands" },
-      { mode = "n", keys = "<Leader>d", desc = "󰃤 Diagnostics" },
       { mode = "n", keys = "<Leader>e", desc = "󰍉 Fzf Flexible" },
       { mode = "n", keys = "<Leader>f", desc = "󰍉 Find Files" },
       { mode = "n", keys = "<Leader>g", desc = "󰍉 Grep" },
-      { mode = "n", keys = "<Leader>h", desc = "󰋚 History" },
-      { mode = "n", keys = "<Leader>l", desc = "󰒲 Lazy / LSP" },
+      { mode = "n", keys = "<Leader>l", desc = "󰾆 Lazy" },
       { mode = "n", keys = "<Leader>o", desc = "󰇥 Yazi" },
       { mode = "n", keys = "<Leader>p", desc = "󰅇 Paste" },
       { mode = "n", keys = "<Leader>q", desc = "󰗼 Quit" },
       { mode = "n", keys = "<Leader>r", desc = "󰑓 Reload" },
       { mode = "n", keys = "<Leader>s", desc = "󰆓 Sessions" },
-      { mode = "n", keys = "<Leader>t", desc = "󰉿 Format" },
       { mode = "n", keys = "<Leader>u", desc = "󰔡 Toggles" },
       { mode = "n", keys = "<Leader>w", desc = "󰆓 Advanced Save" },
       { mode = "n", keys = "<Leader>y", desc = "󰅎 Yank" },
-      { mode = "n", keys = "<Leader>z", desc = "󱐋 Code Runner" },
 
       -- ============================================
       -- SUB-GROUP DEFINITIONS
       -- ============================================
       { mode = "n", keys = "<Leader>fi", desc = "󰍉 Find Files .." },
       { mode = "n", keys = "<Leader>gi", desc = "󰊢 Grep in .." },
-      { mode = "n", keys = "<Leader>ll", desc = "󰒲 Lazy" },
-      { mode = "n", keys = "<Leader>ls", desc = "󰒍 LSP Server" },
       { mode = "n", keys = "<Leader>qf", desc = "󰗼 Force Quit" },
       { mode = "n", keys = "<Leader>wf", desc = "󰆓 Force Save" },
 
@@ -95,6 +88,7 @@ local function setup_miniclues()
       { mode = "v", keys = "<Leader>r", desc = "󰛔 Replace" },
 
       { mode = "n", keys = ";g", desc = "󰊢 LazyGit" },
+      { mode = "n", keys = ";l", desc = " Log" },
     },
   })
   -- ============================================

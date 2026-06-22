@@ -369,6 +369,7 @@ function M.setup(opts)
       open_hsplit(height)
     end
   end, { silent = true, desc = "Toggle Diagnostic Panel" })
+  vim.keymap.set("n", "<C-S-End>", "<cmd>FzfLua diagnostics_workspace<cr>", { desc = "Workspace diagnostics" })
 end
 
 return M

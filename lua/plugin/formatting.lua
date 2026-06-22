@@ -3,7 +3,7 @@ return {
     "stevearc/conform.nvim",
     keys = {
       {
-        "<leader>tt",
+        ";f",
         function()
           require("conform").format()
         end,

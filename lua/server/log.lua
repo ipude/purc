@@ -144,10 +144,9 @@ local function toggle_buf()
   lsp_buf = vim.api.nvim_get_current_buf()
   local opts = { noremap = true, silent = true, buffer = lsp_buf }
   vim.keymap.set("n", "q",          "<cmd>bprev<cr>", opts)
-  vim.keymap.set("n", ";l", "<cmd>bprev<cr>", opts)
 end
 
-vim.keymap.set("n", ";l", toggle_buf, { noremap = true, silent = true, desc = "Toggle LSP log" })
+vim.keymap.set("n", ";ll", toggle_buf, { noremap = true, silent = true, desc = "Toggle LSP log" })
 
 -- LSP handlers ----------------------------------------------------------------
 

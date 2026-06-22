@@ -37,7 +37,6 @@ local map = vim.keymap.set
 map("n", "<leader>fz", "<cmd>FzfLua<cr>", { desc = "FzfLua" })
 map("n", "<leader>fd", "<cmd>FzfLua files<cr>", { desc = "Find files CWD" })
 map("n", "<leader>fo", "<cmd>FzfLua oldfiles<cr>", { desc = "Recent files" })
-map("n", "<leader>dw", "<cmd>FzfLua diagnostics_workspace<cr>", { desc = "Workspace diagnostics" })
 map("n", "<leader>gd", "<cmd>FzfLua live_grep<cr>", { desc = "Live grep CWD" })
 
 -- Commands with custom arguments
@@ -100,12 +99,12 @@ end
 vim.keymap.set("n", "<leader>ff", function()
   local root = vim.fs.root(0, {".root"})
   require("fzf-lua").files({ cwd = root })
-end)
+end, { desc = "Open root" })
 
 map("n", "<leader>ef", function()
   fzf_in_custom_dir("files")
-end, { desc = "FZF files in typed dir" })
+end, { desc = "Open custom dir" })
 
 map("n", "<leader>eg", function()
   fzf_in_custom_dir("grep")
-end, { desc = "FZF grep in typed dir" })
+end, { desc = "Grep in custom dir" })
