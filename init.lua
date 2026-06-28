@@ -1,4 +1,5 @@
 -- vim thing
+vim.o.mouse = ""
 -- must load first
 vim.loader.enable()
 require("vim._core.ui2").enable()

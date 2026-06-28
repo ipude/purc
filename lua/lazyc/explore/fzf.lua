@@ -10,6 +10,7 @@ local function setup_fzf()
       col = 0.50,
       border = "rounded",
       preview = {
+        delay = 0,
         border = "rounded",
         wrap = "nowrap",
         hidden = "nohidden",
