@@ -40,16 +40,4 @@ return {
       })
     end,
   },
-  {
-    "OXY2DEV/markview.nvim",
-    lazy = true,
-    ft = { "markdown" },
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "echasnovski/mini.icons",
-    },
-    opts = {
-      modes = { "n", "no", "c" },
-    },
-  },
 }
