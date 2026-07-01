@@ -9,16 +9,20 @@ local function setup_fzf()
       row = 0.35,
       col = 0.50,
       border = "rounded",
+      wrap = true,
       preview = {
         delay = 0,
         border = "rounded",
-        wrap = "nowrap",
+        wrap = "wrap",
         hidden = "nohidden",
         vertical = "down:45%",
         horizontal = "right:60%",
         layout = "flex",
         flip_columns = 120,
       },
+    },
+    fzf_opts = {
+      ["--wrap"] = true
     },
     fzf_colors = {
       ["fg"] = { "fg", "Normal" },
