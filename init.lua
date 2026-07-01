@@ -30,8 +30,8 @@ require("lazyc.mini.tabline_motion")
 require("treesitters.lazy")
 
 -- lua/lazy/
+-- require("lazyc.mini.icons")
 require("lazyc.explore.oil")
 require("lazyc.explore.fzf")
 require("lazyc.mini.miniclues")
-require("lazyc.mini.icons")
 require("lazyc.mini.indent")

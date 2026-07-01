@@ -8,7 +8,10 @@ return {
   },
   {
     "echasnovski/mini.icons",
-    lazy = true,
+    lazy = false,
+    config = function ()
+      require("mini.icons").setup()
+    end
   },
   {
     "lukas-reineke/indent-blankline.nvim",
