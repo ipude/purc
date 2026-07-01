@@ -51,7 +51,12 @@ return {
       },
 
       sources = {
-        default = { "lsp", "path", "snippets" },
+        default = { "lsp", "path"},
+        per_filetype = {
+          rust = {"lsp", "path"},
+          zig = {"lsp", "path"},
+          html = {"lsp", "path", "snippets"}
+        }
       },
 
       fuzzy = { implementation = "prefer_rust" },
