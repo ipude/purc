@@ -19,8 +19,6 @@ vim.keymap.set({ "n", "v" }, "<End>", "g$")
 vim.keymap.set("i", "<End>", "<C-o>g$")
 vim.keymap.set("n", "k", "g<Up>")
 vim.keymap.set("n", "j", "g<Down>")
-vim.keymap.set("n", "<Up>", "g<Up>")
-vim.keymap.set("n", "<Down>", "g<Down>")
 
 vim.keymap.set("i", "<Up>", "<C-o>gk")
 vim.keymap.set("i", "<Down>", "<C-o>gj")
