@@ -64,16 +64,14 @@ local function with_escape(mode, fn)
 end
 
 for _, mode in ipairs({ "n", "i", "t" }) do
-  vim.keymap.set(mode, "<F12>", with_escape(mode, listed_toggle), { desc = "Toggle listed terminal", silent = true })
+  vim.keymap.set(mode, "<C-t>", with_escape(mode, listed_toggle), { desc = "Toggle listed terminal", silent = true })
+  vim.keymap.set("t", "<C-q>", "<C-\\><C-n>:q<CR>", { desc = "Exit terminal and close buffer" })
 end
 
 -- Leave the buffer on bufprev/bufnext
 vim.api.nvim_create_autocmd("BufLeave", {
   callback = function(ev)
-    if listed_buf_exists()
-      and ev.buf == listed_term.buf
-      and vim.api.nvim_get_current_tabpage() == listed_term.tab
-    then
+    if listed_buf_exists() and ev.buf == listed_term.buf and vim.api.nvim_get_current_tabpage() == listed_term.tab then
       listed_term.tab = nil
       if #vim.api.nvim_list_tabpages() > 1 then
         vim.cmd("tabclose")
