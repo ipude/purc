@@ -140,12 +140,12 @@ MiniTabline.setup = function(config)
   )
 
   -- Mappings to reorder current buffer's tab
-  vim.keymap.set('n', '<M-,>', function() MiniTabline.move_buffer(-1) end, { desc = 'Move current buffer tab left' })
-  vim.keymap.set('n', '<M-.>', function() MiniTabline.move_buffer(1) end, { desc = 'Move current buffer tab right' })
+  vim.keymap.set({"n", "i", "v"}, '<M-,>', function() MiniTabline.move_buffer(-1) end, { desc = 'Move current buffer tab left' })
+  vim.keymap.set({"n", "i", "v"}, '<M-.>', function() MiniTabline.move_buffer(1) end, { desc = 'Move current buffer tab right' })
 
   -- Mappings to navigate buffers following the visual tab order
-  vim.keymap.set('n', '<PageDown>', function() MiniTabline.goto_buffer(-1) end, { desc = 'Go to previous tab (visual order)' })
-  vim.keymap.set('n', '<PageUp>', function() MiniTabline.goto_buffer(1) end, { desc = 'Go to next tab (visual order)' })
+  vim.keymap.set({"n", "i", "v"}, '<PageDown>', function() MiniTabline.goto_buffer(-1) end, { desc = 'Go to previous tab (visual order)' })
+  vim.keymap.set({"n", "i", "v"}, '<PageUp>', function() MiniTabline.goto_buffer(1) end, { desc = 'Go to next tab (visual order)' })
 end
 
 --- Defaults ~
