@@ -8,10 +8,12 @@ return {
   },
   {
     "echasnovski/mini.icons",
-    lazy = false,
-    config = function ()
+    lazy = true,
+    opts = {},
+    config = function()
       require("mini.icons").setup()
-    end
+      MiniIcons.mock_nvim_web_devicons()
+    end,
   },
   {
     "lukas-reineke/indent-blankline.nvim",
