@@ -8,7 +8,7 @@ return {
   },
   {
     "echasnovski/mini.icons",
-    lazy = true,
+    lazy = false,
     opts = {},
     config = function()
       require("mini.icons").setup()
