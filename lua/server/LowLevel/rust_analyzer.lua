@@ -8,7 +8,7 @@ vim.lsp.config("rust_analyzer", {
     ["rust-analyzer"] = {
       cargo = { allFeatures = false, buildScripts = { enable = false }, loadOutDirsFromCheck = false },
       check = { command = "clippy", extraArgs = { "--no-deps" } },
-      procMacro = { enable = false, attributes = { enable = false } },
+      procMacro = { enable = true, attributes = { enable = false } },
       diagnostics = {
         enable = true,
         refresh = { workspace = { enable = true } },
