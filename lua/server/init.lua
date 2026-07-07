@@ -1,4 +1,14 @@
 -- ==========================================
+-- These must load before
+-- ==========================================
+require("server.diagnostic")
+require("server.map")
+-- ==========================================
+-- End
+-- ==========================================
+
+
+-- ==========================================
 -- Lsp server require calls start from here
 -- ==========================================
 local ft_servers = {
@@ -29,9 +39,7 @@ local function ensure_lsp_core()
     return
   end
   lsp_core_loaded = true
-  require("server.diagnostic")
   require("server.lsp")
-  require("server.map")
   require("server.log")
 end
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -71,3 +79,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
   end,
 })
+-- ==========================================
+-- End
+-- ==========================================
