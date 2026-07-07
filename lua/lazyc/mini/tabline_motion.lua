@@ -1,7 +1,3 @@
-local modes = { "n", "i", "v", "c", "t" } -- normal, insert, visual, command, terminal
-
-vim.keymap.set(modes, "<PageDown>", "<cmd>bprevious<cr>", { silent = true, desc = "Previous buffer" })
-vim.keymap.set(modes, "<PageUp>", "<cmd>bnext<cr>", { silent = true, desc = "Next buffer" })
 vim.keymap.set({ "n", "t" }, "<C-k>", "<cmd>tabprevious<cr>", { silent = true, desc = "Previous tab" })
 vim.keymap.set({ "n", "t" }, "<C-j>", "<cmd>tabnext<cr>", { silent = true, desc = "Next tab" })
 

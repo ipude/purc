@@ -63,6 +63,12 @@
 --- This order is manual and session-local: newly opened buffers are appended
 --- at the end, and closed buffers are simply dropped from the order.
 ---
+--- Note that |:bnext| and |:bprevious| ignore this order and always follow
+--- Neovim's internal buffer-number order instead. To navigate in the same
+--- order the tabline displays, use |MiniTabline.goto_buffer()|, which is
+--- bound to `<PageUp>` (previous tab) and `<PageDown>` (next tab) by
+--- |MiniTabline.setup()|.
+---
 --- # Highlight groups ~
 --- *MiniTabline-hl-groups*
 ---
@@ -136,6 +142,10 @@ MiniTabline.setup = function(config)
   -- Mappings to reorder current buffer's tab
   vim.keymap.set('n', '<M-,>', function() MiniTabline.move_buffer(-1) end, { desc = 'Move current buffer tab left' })
   vim.keymap.set('n', '<M-.>', function() MiniTabline.move_buffer(1) end, { desc = 'Move current buffer tab right' })
+
+  -- Mappings to navigate buffers following the visual tab order
+  vim.keymap.set('n', '<PageDown>', function() MiniTabline.goto_buffer(-1) end, { desc = 'Go to previous tab (visual order)' })
+  vim.keymap.set('n', '<PageUp>', function() MiniTabline.goto_buffer(1) end, { desc = 'Go to next tab (visual order)' })
 end
 
 --- Defaults ~
@@ -230,6 +240,38 @@ MiniTabline.move_buffer = function(direction)
 
   -- Force tabline to redraw with new order right away
   vim.cmd('redrawtabline')
+end
+
+--- Go to buffer's neighbor in display order
+---
+--- Switches to the buffer displayed immediately before/after the current one
+--- in the tabline's visual order (`H.buf_order`), as opposed to |:bnext| and
+--- |:bprevious| which follow Neovim's internal buffer-number order.
+--- Wraps around at the ends.
+---
+---@param direction number Either `-1` (previous tab) or `1` (next tab).
+MiniTabline.goto_buffer = function(direction)
+  if direction ~= -1 and direction ~= 1 then H.error('`direction` should be either -1 or 1') end
+
+  H.sync_buf_order()
+  local n = #H.buf_order
+  if n == 0 then return end
+
+  local cur_buf_id = vim.api.nvim_get_current_buf()
+  local cur_index
+  for i, buf_id in ipairs(H.buf_order) do
+    if buf_id == cur_buf_id then
+      cur_index = i
+      break
+    end
+  end
+  -- If current buffer isn't listed (e.g. scratch buffer), start from first
+  if cur_index == nil then cur_index = direction == 1 and 0 or 1 end
+
+  -- Wrap around using 1-based modular arithmetic
+  local target_index = ((cur_index - 1 + direction) % n) + 1
+
+  vim.api.nvim_set_current_buf(H.buf_order[target_index])
 end
 
 -- Helper data ================================================================
