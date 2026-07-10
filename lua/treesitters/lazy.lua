@@ -10,15 +10,6 @@ local function start_buffer(buf)
     vim.wo[win].foldlevel = 99
   end
 end
-
--- FileType fires synchronously for the buffer you open at startup too,
--- right after filetype detection — no defer_fn, no race window where
--- indentexpr is still empty on your first o/O/i<CR>.
-vim.api.nvim_create_autocmd("FileType", {
-  callback = function(args)
-    start_buffer(args.buf)
-  end,
-})
 vim.api.nvim_create_autocmd("VimEnter", {
   once = true,
   callback = function()
@@ -33,9 +24,11 @@ vim.api.nvim_create_autocmd("VimEnter", {
       -- phase 2: hand off to FileType for everything opened afterward
       vim.api.nvim_create_autocmd("FileType", {
         callback = function(args)
-          start_buffer(args.buf)
+          vim.defer_fn(function()
+            start_buffer(args.buf)
+          end, 0)
         end,
       })
-    end, 50)
+    end, 25)
   end,
 })
