@@ -75,7 +75,7 @@ require("lazy").setup({
   },
 
   ui = {
-    size = { width = 0.88, height = 0.9 },
+    size = { width = 1, height = 1 },
     wrap = true,
     title = "   Lazy Plugin Manager ",
     backdrop = 70,
