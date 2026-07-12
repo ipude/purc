@@ -132,7 +132,7 @@ return {
     },
     config = function()
       vim.g.lazygit_floating_window_winblend = 0
-      vim.g.lazygit_floating_window_scaling_factor = 0.9
+      vim.g.lazygit_floating_window_scaling_factor = 1
       vim.g.lazygit_floating_window_border_chars = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" }
       vim.g.lazygit_use_neovim_remote = 1 -- fallback to 0 if neovim-remote not installed
     end,
