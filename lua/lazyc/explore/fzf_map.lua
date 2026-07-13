@@ -18,9 +18,42 @@ local function config()
 end
 
 -- ============================
--- files/grep opener with ctrl-g / ctrl-f toggle
+-- Perf: shared fast opts for big/unknown trees
 -- ============================
-local open_files, open_grep
+-- Disabling git_icons/file_icons avoids extra `git status` + devicon
+-- lookups per entry. The --exclude list keeps fd from descending into
+-- huge dirs (node_modules, caches, venvs) that make $HOME/$PREFIX slow.
+local FAST_EXCLUDES = {
+  "--exclude .git",
+  "--exclude node_modules",
+  "--exclude .cache",
+  "--exclude __pycache__",
+  "--exclude .venv",
+  "--exclude venv",
+  "--exclude .npm",
+  "--exclude .cargo",
+}
+
+local function fd_file_opts()
+  return "--color=never --type f --hidden " .. table.concat(FAST_EXCLUDES, " ")
+end
+
+local function rg_extra_opts()
+  local parts = {}
+  for _, e in ipairs(FAST_EXCLUDES) do
+    -- convert "--exclude X" -> "--glob !X" for ripgrep
+    local dir = e:match("^%-%-exclude%s+(.+)$")
+    if dir then
+      table.insert(parts, string.format("--glob '!%s'", dir))
+    end
+  end
+  return table.concat(parts, " ")
+end
+
+-- ============================
+-- files/grep opener with ctrl-r toggle + alt-r dir-picker
+-- ============================
+local open_files, open_grep, pick_dir
 
 local switching = false
 local function guard(fn)
@@ -31,7 +64,7 @@ local function guard(fn)
     switching = true
     local args = { ... }
     vim.schedule(function()
-      fn(unpack(args))
+      fn(table.unpack(args))
       vim.defer_fn(function()
         switching = false
       end, 150)
@@ -43,9 +76,14 @@ open_files = function(cwd, label)
   require("fzf-lua").files({
     cwd = cwd,
     prompt = label,
-    actions = { ["ctrl-r"] = guard(function()
-      open_grep(cwd, label)
-    end) },
+    cwd_prompt = true,
+    git_icons = true,
+    file_icons = true,
+    fd_opts = fd_file_opts(),
+    actions = {
+      ["ctrl-r"] = guard(function() open_grep(cwd, label) end),
+      ["alt-r"] = guard(pick_dir),
+    },
   })
 end
 
@@ -53,34 +91,42 @@ open_grep = function(cwd, label)
   require("fzf-lua").live_grep({
     cwd = cwd,
     prompt = label,
-    actions = { ["ctrl-r"] = guard(function()
-      open_files(cwd, label)
-    end) },
+    cwd_prompt = true,
+    git_icons = true,
+    file_icons = true,
+    rg_opts = "--column --line-number --no-heading --color=always --smart-case -g '!.git' "
+      .. rg_extra_opts(),
+    actions = {
+      ["ctrl-r"] = guard(function() open_files(cwd, label) end),
+      ["alt-r"] = guard(pick_dir),
+    },
   })
 end
+
 -- ============================
--- Keymaps (6 total)
+-- Keymaps
 -- ============================
 local map = vim.keymap.set
 
 map("n", "<leader>fd", function()
-  open_files(vim.fn.getcwd(), "Files (cwd)> ")
+  open_files(vim.fn.getcwd(), "Cwd/")
 end, { desc = "Files: cwd" })
 map("n", "<leader>fr", function()
-  open_files(root(), "Files (root)> ")
+  open_files(root(), "Root_Dir/")
 end, { desc = "Files: project root" })
 map("n", "<leader>fh", function()
-  open_files(home(), "Files ($HOME)> ")
+  open_files(home(), "~/")
 end, { desc = "Files: $HOME" })
 map("n", "<leader>fp", function()
-  open_files(prefix(), "Files ($PREFIX)> ")
+  open_files(prefix(), "$PREFIX/")
 end, { desc = "Files: $PREFIX" })
 map("n", "<leader>fc", function()
-  open_files(config(), "Files (nvim config)> ")
+  open_files(config(), "Purc/")
 end, { desc = "Files: nvim config" })
 
-local pick_dir  -- forward declare so open_files/open_grep can reference it
-
+-- ============================
+-- Custom dir picker (fzf_exec — no fzf-lua pre-processing overhead)
+-- ============================
 local function termux_roots()
   return {
     HOME = os.getenv("HOME") or "/data/data/com.termux/files/home",
@@ -114,30 +160,6 @@ pick_dir = function()
         local full = expand_label(selected[1])
         open_files(full, "Files (" .. selected[1] .. ")> ")
       end,
-    },
-  })
-end
-
-open_files = function(cwd, label)
-  require("fzf-lua").files({
-    cwd = cwd,
-    prompt = label,
-    cwd_prompt = false,
-    actions = {
-      ["ctrl-r"] = guard(function() open_grep(cwd, label) end),
-      ["alt-r"] = guard(pick_dir),
-    },
-  })
-end
-
-open_grep = function(cwd, label)
-  require("fzf-lua").live_grep({
-    cwd = cwd,
-    prompt = label,
-    cwd_prompt = false,
-    actions = {
-      ["ctrl-r"] = guard(function() open_files(cwd, label) end),
-      ["alt-r"] = guard(pick_dir),
     },
   })
 end

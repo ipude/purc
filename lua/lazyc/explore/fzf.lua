@@ -21,7 +21,6 @@ local function setup_fzf()
         flip_columns = 120,
       },
     },
-    -- actions = { ["ctrl-g"] = require("fzf-lua").actions.grep_lgrep },
     fzf_opts = {
       ["--wrap"] = true,
     },
@@ -44,7 +43,6 @@ local function setup_fzf()
       git_icons = true,
       file_icons = true,
       color_icons = true,
-      fd_opts = "--color=never --type f --hidden --follow --exclude .git",
     },
     grep = {
       prompt = " ",
@@ -53,7 +51,6 @@ local function setup_fzf()
       git_icons = true,
       file_icons = true,
       color_icons = true,
-      rg_opts = "--hidden --column --line-number --no-heading --color=always --smart-case -g '!.git'",
     },
   })
 end
