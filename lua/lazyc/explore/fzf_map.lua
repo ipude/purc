@@ -1,110 +1,118 @@
 -- ============================
--- Termux detection
+-- Path resolvers
 -- ============================
-local _home, _root
-local function sys_home()
-  if _home then
-    return _home
-  end
-  _home = vim.env.TERMUX_VERSION and "/data/data/com.termux/files/home" or vim.env.HOME or vim.fn.getcwd()
-  return _home
+local function home()
+  return vim.env.TERMUX_VERSION and "/data/data/com.termux/files/home" or vim.env.HOME or vim.fn.getcwd()
 end
-local function sys_root()
-  if _root then
-    return _root
-  end
-  _root = vim.env.TERMUX_VERSION and "/data/data/com.termux/files" or "/"
-  return _root
+
+local function prefix()
+  return vim.env.PREFIX or "/"
+end
+
+local function root()
+  return vim.fs.root(0, { ".root", ".git" }) or vim.fn.getcwd()
+end
+
+local function config()
+  return vim.fn.stdpath("config")
 end
 
 -- ============================
--- Helper to escape arguments for FzfLua command
+-- files/grep opener with ctrl-g / ctrl-f toggle
 -- ============================
-local function escape_cmd_arg(arg)
-  if not arg then
-    return ""
+local open_files, open_grep
+
+local switching = false
+local function guard(fn)
+  return function(...)
+    if switching then
+      return
+    end
+    switching = true
+    local args = { ... }
+    vim.schedule(function()
+      fn(unpack(args))
+      vim.defer_fn(function()
+        switching = false
+      end, 150)
+    end)
   end
-  -- Escape spaces and special characters
-  return arg:gsub(" ", "\\ ")
 end
 
+open_files = function(cwd, label)
+  require("fzf-lua").files({
+    cwd = cwd,
+    prompt = label,
+    actions = { ["ctrl-r"] = guard(function()
+      open_grep(cwd, label)
+    end) },
+  })
+end
+
+open_grep = function(cwd, label)
+  require("fzf-lua").live_grep({
+    cwd = cwd,
+    prompt = label,
+    actions = { ["ctrl-r"] = guard(function()
+      open_files(cwd, label)
+    end) },
+  })
+end
 -- ============================
--- Keymaps (all using vim.cmd, truly lazy)
+-- Keymaps (6 total)
 -- ============================
 local map = vim.keymap.set
 
--- Simple commands
-map("n", "<leader>fz", "<cmd>FzfLua<cr>", { desc = "FzfLua" })
-map("n", "<leader>fd", "<cmd>FzfLua files<cr>", { desc = "Find files CWD" })
-map("n", "<leader>fo", "<cmd>FzfLua oldfiles<cr>", { desc = "Recent files" })
-map("n", "<leader>gd", "<cmd>FzfLua live_grep<cr>", { desc = "Live grep CWD" })
-
--- Commands with custom arguments
+map("n", "<leader>fd", function()
+  open_files(vim.fn.getcwd(), "Files (cwd)> ")
+end, { desc = "Files: cwd" })
+map("n", "<leader>fr", function()
+  open_files(root(), "Files (root)> ")
+end, { desc = "Files: project root" })
+map("n", "<leader>fh", function()
+  open_files(home(), "Files ($HOME)> ")
+end, { desc = "Files: $HOME" })
+map("n", "<leader>fp", function()
+  open_files(prefix(), "Files ($PREFIX)> ")
+end, { desc = "Files: $PREFIX" })
 map("n", "<leader>fc", function()
-  local config_dir = vim.fn.expand("$MYVIMRC"):match("(.*/)")
-  if config_dir then
-    vim.cmd("FzfLua files cwd=" .. escape_cmd_arg(config_dir) .. " prompt='< Neovim Config > '")
-  else
-    vim.notify("Could not find config directory", vim.log.levels.ERROR)
+  open_files(config(), "Files (nvim config)> ")
+end, { desc = "Files: nvim config" })
+
+-- ============================
+-- Shorten a path using whatever env var best matches it
+-- ============================
+local function shorten_path(p)
+  local best_var, best_val
+  for k, v in pairs(vim.fn.environ()) do
+    if
+      type(v) == "string"
+      and v:sub(1, 1) == "/"
+      and #v > 1
+      and p:sub(1, #v) == v
+      and (#p == #v or p:sub(#v + 1, #v + 1) == "/")
+    then
+      if not best_val or #v > #best_val then
+        best_var, best_val = k, v
+      end
+    end
   end
-end, { desc = "Find config files" })
-
-map("n", "<leader>fih", function()
-  vim.cmd("FzfLua files cwd=" .. escape_cmd_arg(sys_home()))
-end, { desc = "Find Files in HOME" })
-
-map("n", "<leader>fir", function()
-  vim.cmd("FzfLua files cwd=" .. escape_cmd_arg(sys_root()))
-end, { desc = "Find Files in ROOT" })
-
-map("n", "<leader>gc", function()
-  vim.cmd("FzfLua live_grep cwd=" .. escape_cmd_arg(vim.fn.stdpath("config")) .. " prompt='GrepConfig: '")
-end, { desc = "Grep config" })
-
-map("n", "<leader>gih", function()
-  vim.cmd("FzfLua live_grep cwd=" .. escape_cmd_arg(sys_home()) .. " prompt='GrepHome/'")
-end, { desc = "Grep home" })
-
-map("n", "<leader>gir", function()
-  vim.cmd("FzfLua live_grep cwd=" .. escape_cmd_arg(sys_root()) .. " prompt='GrepRoot/'")
-end, { desc = "Grep root" })
-
--- Custom directory functions
-local function fzf_in_custom_dir(mode)
-  mode = mode or "files"
-  vim.ui.input({
-    prompt = " Dir: ",
-    default = vim.fn.getcwd(),
-    completion = "dir",
-  }, function(input)
-    if not input or input == "" then
-      return
-    end
-    local path = vim.fn.expand(input)
-    path = path:gsub("%$(%w+)", function(var)
-      return os.getenv(var) or ("$" .. var)
-    end)
-    if vim.fn.isdirectory(path) == 0 then
-      vim.notify("Not a directory: " .. path, vim.log.levels.ERROR)
-      return
-    end
-
-    -- Use FzfLua command instead of requiring the module
-    local cmd = "FzfLua " .. mode .. " cwd=" .. escape_cmd_arg(path)
-    vim.cmd(cmd)
-  end)
+  if not best_var then
+    return p
+  end
+  if best_var == "HOME" then
+    return "~" .. p:sub(#best_val + 1)
+  end
+  return "$" .. best_var .. p:sub(#best_val + 1)
 end
 
--- usage : `touch .root` at root of project (once per project)
-vim.keymap.set("n", "<leader>ff", function()
-  local root = vim.fs.root(0, {".root"})
-  require("fzf-lua").files({ cwd = root })
-end, { desc = "Open root" })
-
-map("n", "<leader>ef", function()
-  fzf_in_custom_dir("files")
-end, { desc = "Open custom dir" })
-
-map("n", "<leader>eg", function()
-  fzf_in_custom_dir("grep")
-end, { desc = "Grep in custom dir" })
+map("n", "<leader>ff", function()
+  require("fzf-lua").fzf_exec("fd --type d --hidden --exclude .git . " .. vim.fn.shellescape(home()), {
+    prompt = "Dir> ",
+    actions = {
+      ["default"] = function(selected)
+        open_files(selected[1], "Files (" .. shorten_path(selected[1]) .. ")> ")
+      end,
+    },
+  })
+end, { desc = "Files: pick custom dir (fuzzy)" })

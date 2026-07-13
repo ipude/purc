@@ -62,9 +62,7 @@ local function setup_miniclues()
       -- TOP-LEVEL GROUP DEFINITIONS
       -- ============================================
       { mode = "n", keys = "<Leader>b", desc = "󰓩 Buffers" },
-      { mode = "n", keys = "<Leader>e", desc = "󰍉 Fzf Flexible" },
       { mode = "n", keys = "<Leader>f", desc = "󰍉 Find Files" },
-      { mode = "n", keys = "<Leader>g", desc = "󰍉 Grep" },
       { mode = "n", keys = "<Leader>l", desc = "󰾆 Lazy" },
       { mode = "n", keys = "<Leader>o", desc = "󰇥 Yazi" },
       { mode = "n", keys = "<Leader>p", desc = "󰅇 Paste" },
@@ -78,8 +76,7 @@ local function setup_miniclues()
       -- ============================================
       -- SUB-GROUP DEFINITIONS
       -- ============================================
-      { mode = "n", keys = "<Leader>fi", desc = "󰍉 Find Files .." },
-      { mode = "n", keys = "<Leader>gi", desc = "󰊢 Grep in .." },
+      { mode = "n", keys = "<Leader>fi", desc = "󰍉 Find & Grep" },
       { mode = "n", keys = "<Leader>qf", desc = "󰗼 Force Quit" },
       { mode = "n", keys = "<Leader>wf", desc = "󰆓 Force Save" },
 

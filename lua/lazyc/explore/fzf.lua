@@ -21,8 +21,9 @@ local function setup_fzf()
         flip_columns = 120,
       },
     },
+    -- actions = { ["ctrl-g"] = require("fzf-lua").actions.grep_lgrep },
     fzf_opts = {
-      ["--wrap"] = true
+      ["--wrap"] = true,
     },
     fzf_colors = {
       ["fg"] = { "fg", "Normal" },
