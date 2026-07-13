@@ -79,40 +79,67 @@ map("n", "<leader>fc", function()
   open_files(config(), "Files (nvim config)> ")
 end, { desc = "Files: nvim config" })
 
--- ============================
--- Shorten a path using whatever env var best matches it
--- ============================
-local function shorten_path(p)
-  local best_var, best_val
-  for k, v in pairs(vim.fn.environ()) do
-    if
-      type(v) == "string"
-      and v:sub(1, 1) == "/"
-      and #v > 1
-      and p:sub(1, #v) == v
-      and (#p == #v or p:sub(#v + 1, #v + 1) == "/")
-    then
-      if not best_val or #v > #best_val then
-        best_var, best_val = k, v
-      end
-    end
-  end
-  if not best_var then
-    return p
-  end
-  if best_var == "HOME" then
-    return "~" .. p:sub(#best_val + 1)
-  end
-  return "$" .. best_var .. p:sub(#best_val + 1)
+local pick_dir  -- forward declare so open_files/open_grep can reference it
+
+local function termux_roots()
+  return {
+    HOME = os.getenv("HOME") or "/data/data/com.termux/files/home",
+    PREFIX = os.getenv("PREFIX") or "/data/data/com.termux/files/usr",
+  }
 end
 
-map("n", "<leader>ff", function()
-  require("fzf-lua").fzf_exec("fd --type d --hidden --exclude .git . " .. vim.fn.shellescape(home()), {
+local function expand_label(label)
+  local roots = termux_roots()
+  if label:sub(1, 1) == "~" then
+    return roots.HOME .. label:sub(2)
+  elseif label:sub(1, 8) == "$PREFIX/" or label == "$PREFIX" then
+    return roots.PREFIX .. label:sub(8)
+  end
+  return label
+end
+
+pick_dir = function()
+  local roots = termux_roots()
+  local cmd = string.format(
+    [[{ fd --type d --hidden --exclude .git . %s 2>/dev/null | sed "s#^%s#~#"; ]]
+      .. [[fd --type d --hidden --exclude .git . %s 2>/dev/null | sed "s#^%s#\$PREFIX#"; }]],
+    vim.fn.shellescape(roots.HOME), roots.HOME,
+    vim.fn.shellescape(roots.PREFIX), roots.PREFIX
+  )
+
+  require("fzf-lua").fzf_exec(cmd, {
     prompt = "Dir> ",
     actions = {
       ["default"] = function(selected)
-        open_files(selected[1], "Files (" .. shorten_path(selected[1]) .. ")> ")
+        local full = expand_label(selected[1])
+        open_files(full, "Files (" .. selected[1] .. ")> ")
       end,
     },
   })
-end, { desc = "Files: pick custom dir (fuzzy)" })
+end
+
+open_files = function(cwd, label)
+  require("fzf-lua").files({
+    cwd = cwd,
+    prompt = label,
+    cwd_prompt = false,
+    actions = {
+      ["ctrl-r"] = guard(function() open_grep(cwd, label) end),
+      ["alt-r"] = guard(pick_dir),
+    },
+  })
+end
+
+open_grep = function(cwd, label)
+  require("fzf-lua").live_grep({
+    cwd = cwd,
+    prompt = label,
+    cwd_prompt = false,
+    actions = {
+      ["ctrl-r"] = guard(function() open_files(cwd, label) end),
+      ["alt-r"] = guard(pick_dir),
+    },
+  })
+end
+
+map("n", "<leader>ff", pick_dir, { desc = "Files: pick custom dir ($HOME/$PREFIX)" })
