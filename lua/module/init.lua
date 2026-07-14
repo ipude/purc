@@ -7,6 +7,7 @@ require("module.diagPanel.Panel").setup({
   -- mode = "tab"
 })
 require('module.bufferline.config').setup()
+require("module.session.config")
 -- not needed to use run because F1 and F12 works fine
 -- and are precise
 -- require("module.run.config")
