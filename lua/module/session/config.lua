@@ -7,14 +7,20 @@
 --   <leader>sf  Session Find   -> fuzzy pick + (re)load a session fresh
 --   <leader>sc  Session Create -> new session, fails if name already exists
 --   <leader>sd  Session Delete -> persistent fzf multi-delete (ctrl-x)
---   <leader>ss  Session Save   -> explicit write to the active session
+--   <leader>ss  Session Save   -> force an immediate manual save
+--
+-- Autosave: once a session is loaded/created, any new buffer, split,
+-- or tab schedules a debounced save (AUTOSAVE_DELAY_MS after the last
+-- change). A final synchronous save also runs on VimLeavePre if a
+-- session is loaded, so quitting never loses state even mid-debounce.
 --
 -- Requires: fzf-lua (https://github.com/ibhagwan/fzf-lua)
 --
 -- Global state (exposed for use from other config files):
 --   _G.PuSessionLoaded   -> false, or the loaded session's name (string)
---   _G.PuSessionUnsaved  -> true once a NEW buffer/split/tab has been
---                           added since the session was last loaded/saved
+--   _G.PuSessionUnsaved  -> true while a debounced autosave is pending
+--                           (briefly true between a change and the
+--                           autosave firing; false once it lands)
 --   _G.PuSessionSnapshot -> internal baseline snapshot (buffers/splits/
 --                           tabs) taken at load/save time; exposed
 --                           mainly for debugging/inspection
@@ -27,8 +33,14 @@ local fzf = require("fzf-lua")
 M.session_dir = vim.fn.stdpath("data") .. "/PuSession/"
 
 -- Tracks the name of whatever session is currently "active" in this
--- editor instance (set on create/load). <leader>ss writes to this.
+-- editor instance (set on create/load). Autosave and <leader>ss both
+-- write to this.
 M.current_session = nil
+
+-- How long to wait after the last new buffer/split/tab before
+-- autosaving. Debounced so a burst of changes (e.g. opening several
+-- files at once) collapses into one mksession call.
+M.autosave_delay_ms = 10000
 
 -- Global, cross-file accessible state. Initialize once up front so any
 -- other file can safely read these even before a session is touched.
@@ -157,7 +169,7 @@ end
 
 -- Call this right after a successful create/load/save: marks the
 -- session as loaded, records its name, takes a fresh baseline
--- snapshot, and clears the unsaved flag.
+-- snapshot, and clears the unsaved/pending flags.
 local function mark_loaded(name)
   M.current_session = name
   _G.PuSessionLoaded = name
@@ -174,14 +186,53 @@ local function mark_unloaded()
   _G.PuSessionSnapshot = nil
 end
 
+-- ---------------------------------------------------------------------
+-- Autosave: debounced write to the active session file. Any
+-- buffer/split/tab creation (re)schedules this timer; it collapses
+-- bursts of changes into a single mksession call.
+-- ---------------------------------------------------------------------
+
+local autosave_timer = nil
+
+local function stop_autosave_timer()
+  if autosave_timer then
+    autosave_timer:stop()
+    autosave_timer:close()
+    autosave_timer = nil
+  end
+end
+
+-- Performs the actual write. Safe to call even if nothing is loaded
+-- (no-ops). Runs on the libuv loop, so hop back to the main loop via
+-- vim.schedule before touching vim.* APIs.
+local function do_autosave()
+  stop_autosave_timer()
+  if not M.current_session then
+    return
+  end
+  vim.cmd("mksession! " .. vim.fn.fnameescape(session_path(M.current_session)))
+  mark_loaded(M.current_session)
+end
+
+local function schedule_autosave()
+  if not M.current_session then
+    return
+  end
+  stop_autosave_timer()
+  autosave_timer = uv.new_timer()
+  autosave_timer:start(M.autosave_delay_ms, 0, vim.schedule_wrap(do_autosave))
+end
+
 -- Invoked from BufAdd/WinNew/TabNew only. No-ops if no session is
--- currently loaded, or if the flag is already set.
+-- currently loaded. Marks the pending state and (re)arms the
+-- debounced autosave.
 local function check_unsaved()
-  if not _G.PuSessionLoaded or _G.PuSessionUnsaved then
+  if not _G.PuSessionLoaded then
     return
   end
   if has_new_entities(_G.PuSessionSnapshot) then
     _G.PuSessionUnsaved = true
+    schedule_autosave()
   end
 end
 
@@ -191,16 +242,17 @@ function M.is_session_loaded()
   return _G.PuSessionLoaded
 end
 
---- Returns true if new buffers/splits/tabs have been added since the
---- active session was last loaded/saved.
+--- Returns true if an autosave is currently pending (debounce window
+--- hasn't fired yet) or otherwise not yet flushed to disk.
 function M.is_unsaved()
   return _G.PuSessionUnsaved
 end
 
 --- <leader>ss — Session Save
--- Writes current editor state to the currently active session file.
--- If nothing is active yet (fresh nvim, never created/loaded one),
--- prompts for a name so save never silently no-ops.
+-- Forces an immediate save, bypassing the debounce. Useful right
+-- before you know you're about to quit or hand off. If nothing is
+-- active yet (fresh nvim, never created/loaded one), prompts for a
+-- name so save never silently no-ops.
 function M.session_save()
   ensure_dir()
   if not M.current_session then
@@ -220,13 +272,13 @@ function M.session_save()
     return
   end
 
-  vim.cmd("mksession! " .. vim.fn.fnameescape(session_path(M.current_session)))
-  mark_loaded(M.current_session)
-  vim.notify("Session saved: " .. M.current_session)
+  stop_autosave_timer()
+  do_autosave()
 end
 
 --- <leader>sc — Session Create
 -- Name must be unique; refuses (does not overwrite) if it exists.
+-- Once created, the session becomes the autosave target.
 function M.session_create()
   ensure_dir()
   vim.ui.input({ prompt = "New session name: " }, function(name)
@@ -240,12 +292,13 @@ function M.session_create()
     end
     vim.cmd("mksession! " .. vim.fn.fnameescape(session_path(name)))
     mark_loaded(name)
-    vim.notify("Session created: " .. name)
+    vim.notify("Session created (autosave enabled): " .. name)
   end)
 end
 
 --- <leader>sf — Session Find / Load
 -- Fuzzy-pick a session from PuSession/ and load it fresh (reset first).
+-- Once loaded, the session becomes the autosave target.
 function M.session_find()
   ensure_dir()
   local sessions = list_sessions()
@@ -271,7 +324,7 @@ function M.session_find()
         reset_editor_state()
         vim.cmd("silent! source " .. vim.fn.fnameescape(path))
         mark_loaded(name)
-        vim.notify("Loaded session: " .. name)
+        vim.notify("Loaded session (autosave enabled): " .. name)
       end,
     },
   })
@@ -306,6 +359,7 @@ function M.session_delete()
           if file_exists(path) then
             if uv.fs_unlink(path) then
               if M.current_session == name then
+                stop_autosave_timer()
                 mark_unloaded()
               end
               vim.notify("Deleted session: " .. name)
@@ -329,8 +383,7 @@ end
 -- switching to an already-listed buffer (that's BufEnter, deliberately
 -- not hooked). WinNew fires on splits/vsplits, never on <C-w>w focus
 -- changes. TabNew fires on new tabs, never on tabnext/tabprev. This is
--- what keeps the "unsaved" check from ever tripping on plain
--- navigation.
+-- what keeps autosave from ever triggering on plain navigation.
 -- ---------------------------------------------------------------------
 local aug = vim.api.nvim_create_augroup("PuSessionTracking", { clear = true })
 
@@ -338,101 +391,23 @@ vim.api.nvim_create_autocmd("BufAdd", { group = aug, callback = check_unsaved })
 vim.api.nvim_create_autocmd("WinNew", { group = aug, callback = check_unsaved })
 vim.api.nvim_create_autocmd("TabNew", { group = aug, callback = check_unsaved })
 
--- ---------------------------------------------------------------------
--- Quit guard: if a session is loaded and has unsaved buffers/splits/
--- tabs, pop up a native confirm() dialog on the way out and let the
--- user bail. Autocmds (QuitPre/VimLeavePre) can't actually abort a
--- quit in Neovim, so this works by intercepting the ex commands
--- themselves — user commands for the canonical spellings, plus
--- cmdline abbreviations so typing the normal `:q`, `:qa`, etc. gets
--- silently redirected to the guarded version. ZZ/ZQ are remapped too.
--- ---------------------------------------------------------------------
-
-local function has_unsaved_session()
-  return _G.PuSessionLoaded ~= false and _G.PuSessionUnsaved == true
-end
-
--- Returns true if it's OK to proceed with quitting.
-local function confirm_quit()
-  if not has_unsaved_session() then
-    return true
-  end
-
-  local choice = vim.fn.confirm(
-    "Session '"
-      .. _G.PuSessionLoaded
-      .. "' has unsaved changes "
-      .. "(new buffer/split/tab).\nQuit anyway and lose them?",
-    "&Yes, quit\n&No, cancel",
-    2 -- default focus on "No"
-  )
-
-  if choice ~= 1 then
-    vim.notify("Quit cancelled — session not saved", vim.log.levels.WARN)
-    return false
-  end
-  return true
-end
-
--- Wraps a real quit command with the guard. `bang_cmd`/`nobang_cmd` are
--- the actual ex commands to run once confirmed (or immediately, if
--- nothing is unsaved).
-local function guarded(bang_cmd, nobang_cmd)
-  return function(opts)
-    if not confirm_quit() then
-      return
+-- Final safety net: if a session is loaded and a debounced autosave
+-- is still pending when nvim exits, flush it synchronously so the
+-- last few seconds of changes are never lost. Cheap no-op otherwise.
+vim.api.nvim_create_autocmd("VimLeavePre", {
+  group = aug,
+  callback = function()
+    if M.current_session and _G.PuSessionUnsaved then
+      stop_autosave_timer()
+      do_autosave()
     end
-    vim.cmd(opts.bang and bang_cmd or nobang_cmd)
-  end
-end
-
-vim.api.nvim_create_user_command("Q", guarded("q!", "q"), { bang = true })
-vim.api.nvim_create_user_command("Qa", guarded("qa!", "qa"), { bang = true })
-vim.api.nvim_create_user_command("Qall", guarded("qall!", "qall"), { bang = true })
-vim.api.nvim_create_user_command("Wq", guarded("wq!", "wq"), { bang = true })
-vim.api.nvim_create_user_command("Wqa", guarded("wqa!", "wqa"), { bang = true })
-vim.api.nvim_create_user_command("Xa", guarded("xa!", "xa"), { bang = true })
-
--- Redirect the built-in lowercase spellings to the guarded commands
--- above, but ONLY when they're the whole command line (so e.g. `:qa!`
--- as literally typed still passes through untouched at the character
--- level — cnoreabbrev only fires on the bare word).
-local function guard_abbrev(bare)
-  local target = bare:sub(1, 1):upper() .. bare:sub(2)
-  vim.cmd(
-    string.format(
-      [[cnoreabbrev <expr> %s (getcmdtype() == ':' && getcmdline() == '%s') ? '%s' : '%s']],
-      bare,
-      bare,
-      target,
-      bare
-    )
-  )
-end
-
-for _, cmd in ipairs({ "q", "qa", "qall", "wq", "wqa", "xa" }) do
-  guard_abbrev(cmd)
-end
-
--- Normal-mode quit shortcuts, made session-aware too.
-vim.keymap.set("n", "ZZ", function()
-  if not confirm_quit() then
-    return
-  end
-  vim.cmd("wqa")
-end, { desc = "Session-aware ZZ (write & quit all)" })
-
-vim.keymap.set("n", "ZQ", function()
-  if not confirm_quit() then
-    return
-  end
-  vim.cmd("qa!")
-end, { desc = "Session-aware ZQ (quit all, discard)" })
+  end,
+})
 
 -- Keymaps
 vim.keymap.set("n", "<leader>sf", M.session_find, { desc = "Session: find/load" })
 vim.keymap.set("n", "<leader>sc", M.session_create, { desc = "Session: create" })
 vim.keymap.set("n", "<leader>sd", M.session_delete, { desc = "Session: delete (ctrl-x)" })
-vim.keymap.set("n", "<leader>ss", M.session_save, { desc = "Session: save" })
+vim.keymap.set("n", "<leader>ss", M.session_save, { desc = "Session: force immediate save" })
 
 return M
