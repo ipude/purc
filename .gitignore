@@ -1,23 +1,8 @@
 # Backup files
 *.backup
 *.bak
-*~
-# Session files
 *.vim
-session/
-sessions/
 Session.vim
-
-# Undo history
-undodir/
-
-# Swap and temp files
 *.swp
-*.swo
 *.tmp
-
-# macOS
-.DS_Store
-
-# Logs
 *.log
