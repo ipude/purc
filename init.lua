@@ -8,9 +8,6 @@ require("startup")
 -- your core
 require("sys")
 require("map")
-require("ui")
-
--- main plugin file
 require("plugin")
 
 -- your local modules
