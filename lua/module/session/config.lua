@@ -348,39 +348,6 @@ vim.api.nvim_create_autocmd("TabNew", { group = aug, callback = check_unsaved })
 -- silently redirected to the guarded version. ZZ/ZQ are remapped too.
 -- ---------------------------------------------------------------------
 
--- Same walk as has_new_entities(), but collects WHAT is new instead of
--- just a boolean — used to make the quit-confirm popup show actual
--- values (filenames, tab/split counts) instead of a generic message.
-local function collect_diff(snapshot)
-  local diff = { buffers = {}, new_tabs = 0, new_splits = 0 }
-  if not snapshot then
-    return diff
-  end
-
-  for path, _ in pairs(listed_buffer_paths()) do
-    if not snapshot.buffers[path] then
-      table.insert(diff.buffers, vim.fn.fnamemodify(path, ":t"))
-    end
-  end
-
-  local cur_tab_count = #vim.api.nvim_list_tabpages()
-  if cur_tab_count > snapshot.tab_count then
-    diff.new_tabs = cur_tab_count - snapshot.tab_count
-  end
-
-  for _, tab in ipairs(vim.api.nvim_list_tabpages()) do
-    local old_wins = snapshot.tab_windows[tab]
-    if old_wins ~= nil then -- only count splits within tabs that already existed
-      local cur_wins = #vim.api.nvim_tabpage_list_wins(tab)
-      if cur_wins > old_wins then
-        diff.new_splits = diff.new_splits + (cur_wins - old_wins)
-      end
-    end
-  end
-
-  return diff
-end
-
 local function has_unsaved_session()
   return _G.PuSessionLoaded ~= false and _G.PuSessionUnsaved == true
 end
@@ -391,21 +358,11 @@ local function confirm_quit()
     return true
   end
 
-  local diff = collect_diff(_G.PuSessionSnapshot)
-  local lines = {}
-  if #diff.buffers > 0 then
-    table.insert(lines, "  + " .. #diff.buffers .. " buffer(s): " .. table.concat(diff.buffers, ", "))
-  end
-  if diff.new_tabs > 0 then
-    table.insert(lines, "  + " .. diff.new_tabs .. " tab(s)")
-  end
-  if diff.new_splits > 0 then
-    table.insert(lines, "  + " .. diff.new_splits .. " split(s)")
-  end
-  local detail = #lines > 0 and table.concat(lines, "\n") or "  (unsaved changes)"
-
   local choice = vim.fn.confirm(
-    "Session '" .. _G.PuSessionLoaded .. "' has unsaved changes:\n" .. detail .. "\n\nQuit anyway and lose them?",
+    "Session '"
+      .. _G.PuSessionLoaded
+      .. "' has unsaved changes "
+      .. "(new buffer/split/tab).\nQuit anyway and lose them?",
     "&Yes, quit\n&No, cancel",
     2 -- default focus on "No"
   )
@@ -428,42 +385,6 @@ local function guarded(bang_cmd, nobang_cmd)
     vim.cmd(opts.bang and bang_cmd or nobang_cmd)
   end
 end
-
--- Plain (no bang-handling) version for direct use in keymaps — anything
--- that calls `vim.cmd("qa")`/`vim.cmd("qa!")` etc. straight from a
--- keymap callback never touches the command line, so cnoreabbrev can't
--- catch it. Any such keymap needs to call one of these directly instead.
-local function guarded_cmd(cmd)
-  return function()
-    if not confirm_quit() then
-      return
-    end
-    vim.cmd(cmd)
-  end
-end
-
-M.guarded_q = guarded_cmd("q")
-M.guarded_qa = guarded_cmd("qa")
-M.guarded_qa_ = guarded_cmd("qa!") -- discard-unsaved-buffers variant
-M.guarded_wqa = guarded_cmd("wqa")
-M.guarded_wq = guarded_cmd("wq")
-M.guarded_xa = guarded_cmd("xa")
-
--- NOTE on `<cmd>qa<cr>`-style keymaps elsewhere in your config:
--- `<cmd>...<cr>` (and `vim.cmd("qa")`) execute the Ex command directly
--- and never pass through the command-line/typeahead, so the
--- cnoreabbrev redirects below can't see or catch them — same
--- limitation as calling `vim.cmd("qa")` from a keymap callback. ANY
--- keymap defined like this:
---
---   vim.keymap.set("n", "<leader>qq", "<cmd>qa<cr>")
---
--- needs to be rewritten to call the guarded function directly instead:
---
---   vim.keymap.set("n", "<leader>qq", require("user.session").guarded_qa)
---
--- (swap in guarded_q / guarded_qa_ / guarded_wqa / guarded_wq /
--- guarded_xa to match whichever command the original keymap ran).
 
 vim.api.nvim_create_user_command("Q", guarded("q!", "q"), { bang = true })
 vim.api.nvim_create_user_command("Qa", guarded("qa!", "qa"), { bang = true })
@@ -507,14 +428,6 @@ vim.keymap.set("n", "ZQ", function()
   end
   vim.cmd("qa!")
 end, { desc = "Session-aware ZQ (quit all, discard)" })
-
--- <C-q> -> :qa, made session-aware. This OVERWRITES any prior <C-q>
--- mapping (e.g. one set in a separate keymaps file), which only works
--- if THIS file is sourced after that one. If <C-q> stops being guarded
--- again, it means something downstream is re-mapping it afterwards —
--- either move that mapping's definition before this file loads, or
--- delete it there and let this be the single source of truth for <C-q>.
-vim.keymap.set("n", "<C-q>", M.guarded_qa, { desc = "Quit all (session-aware)" })
 
 -- Keymaps
 vim.keymap.set("n", "<leader>sf", M.session_find, { desc = "Session: find/load" })
