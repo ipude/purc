@@ -1,7 +1,7 @@
 -- =======================================
 -- disable accidental macro recording on q
 -- =======================================
-vim.keymap.set("n", "q", "<nop>")
+vim.keymap.set({"n", "v"}, "q", "<nop>")
 vim.keymap.set("n", "<M-t>", "<nop>")
 vim.keymap.set("n", "<M-r>", function()
   if vim.fn.reg_recording() == "" then
