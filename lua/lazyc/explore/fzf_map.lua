@@ -64,7 +64,7 @@ local function guard(fn)
     switching = true
     local args = { ... }
     vim.schedule(function()
-      fn(table.unpack(args))
+      fn(unpack(args))
       vim.defer_fn(function()
         switching = false
       end, 150)
