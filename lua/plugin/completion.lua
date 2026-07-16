@@ -32,9 +32,25 @@ return {
       },
 
       completion = {
-        documentation = { auto_show = false },
+        documentation = {
+          auto_show = true,
+          auto_show_delay_ms = 200,
+          window = {
+            max_width = 60,
+            max_height = 12, -- caps height so it can't eat the whole screen
+            border = "rounded", -- no padding/border = less wasted space
+            winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder",
+            direction_priority = {
+              menu_north = { "n", "s" },
+              menu_south = { "n", "s" },
+            },
+          },
+        },
+
         menu = {
-          max_height = 8,
+          max_height = 8, -- height of items to display
+          border = "rounded",
+          winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
           draw = {
             columns = { { "kind_icon" }, { "label", gap = 1 } }, -- drop label_description
             components = {
@@ -51,12 +67,12 @@ return {
       },
 
       sources = {
-        default = { "lsp", "path"},
+        default = { "lsp", "path" },
         per_filetype = {
-          rust = {"lsp", "path"},
-          zig = {"lsp", "path"},
-          html = {"lsp", "path", "snippets"}
-        }
+          rust = { "lsp", "path" },
+          zig = { "lsp", "path" },
+          html = { "lsp", "path", "snippets" },
+        },
       },
 
       fuzzy = { implementation = "prefer_rust" },
