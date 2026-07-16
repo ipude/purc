@@ -12,7 +12,6 @@
   "mini.icons": { "branch": "main", "commit": "e56797f90192d81f1fda02e662fc3e8e3d775027" },
   "mini.indentscope": { "branch": "main", "commit": "d3f955f09b1a05d25d5a7740338fba2baaee41a3" },
   "mini.move": { "branch": "main", "commit": "b9e452f9c83565a1520e14f7531632160f3b0170" },
-  "mini.sessions": { "branch": "main", "commit": "7cb2945ccc11323b7ca19796eb42618493e1dc12" },
   "nvim-surround": { "branch": "main", "commit": "8b47db616ef658b8fc27e61db2896aa2f40134de" },
   "nvim-treesitter": { "branch": "main", "commit": "4916d6592ede8c07973490d9322f187e07dfefac" },
   "nvim-ts-autotag": { "branch": "main", "commit": "88c1453db4ba7dd24131086fe51fdf74e587d275" },
