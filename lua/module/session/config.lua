@@ -40,7 +40,7 @@ M.current_session = nil
 -- How long to wait after the last new buffer/split/tab before
 -- autosaving. Debounced so a burst of changes (e.g. opening several
 -- files at once) collapses into one mksession call.
-M.autosave_delay_ms = 10000
+M.autosave_delay_ms = 100
 
 -- Global, cross-file accessible state. Initialize once up front so any
 -- other file can safely read these even before a session is touched.
