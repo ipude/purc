@@ -35,6 +35,10 @@ vim.keymap.set("n", "<Leader>ur", "<Cmd>set relativenumber!<CR>", { desc = "Rela
 vim.keymap.set("n", "<Leader>uw", "<Cmd>set wrap!<CR>", { desc = "Word Wrap" })
 vim.keymap.set("n", "<Leader>uc", "<Cmd>set cursorline!<CR>", { desc = "Cursor Line" })
 vim.keymap.set("n", "<Leader>uh", "<Cmd>set hlsearch!<CR>", { desc = "Highlight Search" })
+vim.keymap.set("n", "<Space>uc", function()
+  vim.fn.setreg("/", "")
+  vim.cmd("nohlsearch")
+end, { desc = "Clear search" })
 -- ============================================
 -- SAVE
 -- ============================================
