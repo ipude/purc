@@ -33,6 +33,7 @@ local icons = {
   hint = "󰌵",              -- Lightbulb
   info = "󰋼",              -- Information
   macro = "󰘳",             -- Keyboard/macro
+  search = "󰍉",
   session_saved = " 󰄬",     -- Check all
   session_unsaved = " 󰆓",   -- Save edit
   cursor = "󰆾",            -- Cursor
@@ -79,6 +80,7 @@ local mode_map = {
 
 -- Flat, fixed-color segments: just bold colored text on the base bg —
 -- no pill/background block, so it stays legible in low-contrast themes.
+
 local seg_defs = {
   { key = "lsp", name = "Lsp", color = moon.blue1 },
   { key = "macro", name = "Macro", color = moon.red },
@@ -86,6 +88,7 @@ local seg_defs = {
   { key = "warn", name = "Warn", color = moon.yellow },
   { key = "hint", name = "Hint", color = moon.teal },
   { key = "info", name = "Info", color = moon.cyan },
+  { key = "search", name = "Search", color = moon.purple },  -- NEW
   { key = "session_saved", name = "SessionSaved", color = moon.green },
   { key = "session_unsaved", name = "SessionUnsaved", color = moon.orange },
 }
@@ -121,6 +124,7 @@ end
 local function seg(key, content)
   return seg_hl[key] .. content .. "%#SLDefault#"
 end
+
 
 -- Thin, muted divider placed between visible segments.
 local function divider()
@@ -235,17 +239,65 @@ _G.get_session = function()
   return seg(key, "Session: " ..  name .. icon .. " ")
 end
 
+-- Current search match count (e.g. 3/12), only shown while hlsearch
+-- is active and a search pattern actually exists.
+_G.get_search = function()
+  if vim.v.hlsearch == 0 or vim.fn.getreg("/") == "" then
+    return ""
+  end
+  local ok, result = pcall(vim.fn.searchcount, { maxcount = 999, timeout = 100 })
+  if not ok or not result or result.total == 0 then
+    return ""
+  end
+  return seg("search", icons.search .. " " .. result.current .. "/" .. result.total)
+end
+
+-- Smart indicator: the moment a "/" or "?" search is actually
+-- triggered (not aborted), remove "S" from shortmess so Vim's native
+-- "search hit BOTTOM, continuing at TOP" / count messages show too.
+-- Left off by default so it doesn't clutter :messages otherwise.
+local search_grp = vim.api.nvim_create_augroup("StatuslineSearchRefresh", { clear = true })
+vim.api.nvim_create_autocmd("CmdlineLeave", {
+  group = search_grp,
+  pattern = { "/", "?" },
+  callback = function()
+    if vim.fn.getcmdline() ~= "" then
+      vim.opt.shortmess:remove("S")
+    end
+    vim.cmd("redrawstatus")
+  end,
+})
+
+-- Keep the count fresh as you jump between matches with n/N.
+vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+  group = search_grp,
+  callback = function()
+    if vim.v.hlsearch == 1 then
+      vim.cmd("redrawstatus")
+    end
+  end,
+})
+
+-- Keep the count fresh as you jump between matches with n/N.
+vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
+  group = search_grp,
+  callback = function()
+    if vim.v.hlsearch == 1 then
+      vim.cmd("redrawstatus")
+    end
+  end,
+})
+
 -- Build the full statusline string
 _G.build_statusline = function()
   local mode = _G.get_mode()
   local macro = _G.get_macro_recording()
   local lsp = seg("lsp", icons.lsp .. " " .. _G.get_lsp_count())
   local diag = _G.get_diagnostics()
+  local search = _G.get_search()      -- NEW
   local session = _G.get_session()
   local cursor = "%#SLCursor#" .. icons.cursor .. " %l:%c"
 
-  -- Collect only the segments that currently have content, then join
-  -- them with a single thin divider — no empty " │ │ " gaps.
   local left = { mode }
   if macro ~= "" then
     table.insert(left, macro)
@@ -254,14 +306,15 @@ _G.build_statusline = function()
   if diag ~= "" then
     table.insert(left, diag)
   end
+  if search ~= "" then                -- NEW
+    table.insert(left, search)
+  end
   if session ~= "" then
     table.insert(left, session)
   end
 
   local left_str = table.concat(left, " " .. divider() .. " ")
 
-  --  LEFT: mode │ macro │ lsp │ diagnostics │ session
-  -- RIGHT: cursor position
   return "%#SLBase# " .. left_str .. "%=" .. cursor .. " "
 end
 
