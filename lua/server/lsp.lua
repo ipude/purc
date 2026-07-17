@@ -56,11 +56,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
       end)
     end
 
-    vim.keymap.set("n", "K", hover_in_split, opts)
+    vim.keymap.set("n", "F", hover_in_split, opts)
 
-    vim.keymap.set("i", "<C-h>", function()
-      vim.lsp.buf.signature_help()
-    end, opts)
+    map("n", "K", function()
+      local width = math.floor(vim.o.columns * 0.8)
+      local height = math.floor(vim.o.lines * 0.8)
+
+      vim.lsp.buf.hover({
+        max_width = width,
+        max_height = height,
+      })
+    end)
   end,
 })
 
