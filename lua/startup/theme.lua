@@ -14,8 +14,8 @@ require("tokyonight").setup({
   terminal_colors = true,
   dim_inactive = false,
   on_highlights = function(hl)
-    hl.NormalFloat = { bg = "#2f334d" }
-    hl.FloatBorder = { fg = "#65bcff", bg = "#2f334d", bold = true }
+    hl.NormalFloat = { bg = "#1a1b26" }
+    hl.FloatBorder = { fg = "#65bcff", bg = "#1a1b26", bold = true }
     hl.FloatShadowThrough = { bg = "#222436" }
     hl.FloatShadow = { bg = "#222436" }
     hl.FloatTitle = { bg = "#65bcff", fg = "#000000" }
