@@ -13,7 +13,13 @@ require("tokyonight").setup({
   transparent = false,
   terminal_colors = true,
   dim_inactive = false,
-  on_highlights = function(hl, c)
+  on_highlights = function(hl)
+    hl.NormalFloat = { bg = "#2f334d" }
+    hl.FloatBorder = { fg = "#65bcff", bg = "#2f334d", bold = true }
+    hl.FloatShadowThrough = { bg = "#222436" }
+    hl.FloatShadow = { bg = "#222436" }
+    hl.FloatTitle = { bg = "#65bcff", fg = "#000000" }
+    hl.FloatFooter = { bg = "#65bcff", fg = "#000000" }
     hl.Comment = { fg = "#809ab0", italic = false }
     hl.LineNr = { fg = "#6b7a8e" }
     hl.LineNrAbove = { fg = "#6b7a8e" }
@@ -21,13 +27,9 @@ require("tokyonight").setup({
     hl.MsgSeparator = { bg = "#809ab0" }
     hl.Statusline = { bg = "#222436" }
     hl.Search = { fg = "#1e2030", bg = "#ffc777", bold = true }
-
-    hl.Search = { fg = "#1e2030", bg = "#e0a552", bold = true } -- was #ffc777
-    hl.IncSearch = { fg = "#1e2030", bg = "#e0555f", bold = true } -- was #ff757f
-    hl.CurSearch = { fg = "#1e2030", bg = "#e0754a", bold = true } -- was #ff966c
-
-    -- Cursor gets its own explicit group instead of relying on plain
-    -- reverse-video, so it stays crisp no matter what hl it lands on.
+    hl.Search = { fg = "#1e2030", bg = "#e0a552", bold = true }
+    hl.IncSearch = { fg = "#1e2030", bg = "#e0555f", bold = true }
+    hl.CurSearch = { fg = "#1e2030", bg = "#e0754a", bold = true }
     hl.Cursor = { fg = "#1e2030", bg = "#ffffff", bold = true }
     hl.lCursor = { fg = "#1e2030", bg = "#ffffff", bold = true }
   end,
