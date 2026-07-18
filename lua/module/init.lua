@@ -1,6 +1,5 @@
 require("module.session.config")
 require("module.ui.statusline")
-require("module.ui.eqalizer")
 require("module.autosave.config")
 require("module.terminal.config")
 require("module.diagPanel.Panel").setup({
