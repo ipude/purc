@@ -32,6 +32,35 @@ require("tokyonight").setup({
     hl.CurSearch = { fg = "#1e2030", bg = "#e0754a", bold = true }
     hl.Cursor = { fg = "#1e2030", bg = "#ffffff", bold = true }
     hl.lCursor = { fg = "#1e2030", bg = "#ffffff", bold = true }
+    hl.WinSeparator = { fg = "#65bcff", bold = true }
+    hl.VertSplit = { fg = "#65bcff", bold = true }
+
+    hl.WinSeparator = { fg = "#65bcff", bold = true }
+    hl.VertSplit = { fg = "#65bcff", bold = true }
+
+    hl.FzfLuaNormal = { bg = "#222436", fg = "#c8d3f5" }
+    hl.FzfLuaBorder = { fg = "#65bcff", bg = "#222436", bold = true }
+    hl.FzfLuaTitle = { fg = "#222436", bg = "#65bcff", bold = true }
+    hl.FzfLuaPreviewNormal = { bg = "#222436", fg = "#c8d3f5" }
+    hl.FzfLuaPreviewBorder = { fg = "#65bcff", bg = "#222436", bold = true }
+    hl.FzfLuaPreviewTitle = { fg = "#222436", bg = "#65bcff", bold = true }
+
+    hl.BlinkCmpMenu = { bg = "#1e2030", fg = "#c8d3f5" }
+    hl.BlinkCmpMenuBorder = { fg = "#65bcff", bg = "#1e2030", bold = true }
+    hl.BlinkCmpMenuSelection = { bg = "#2d3f76", bold = true }
+
+    hl.BlinkCmpLabel = { fg = "#c8d3f5" }
+    hl.BlinkCmpLabelMatch = { fg = "#65bcff", bold = true }
+    hl.BlinkCmpLabelDetail = { fg = "#545c7e" }
+    hl.BlinkCmpLabelDescription = { fg = "#545c7e" }
+    hl.BlinkCmpKind = { fg = "#65bcff" }
+
+    hl.BlinkCmpDoc = { bg = "#000000", fg = "#c8d3f5" }
+    hl.BlinkCmpDocBorder = { fg = "#545c7e", bg = "#000000", bold = true }
+    hl.BlinkCmpDocSeparator = { fg = "#545c7e" }
+
+    hl.BlinkCmpSignatureHelp = { bg = "#000000", fg = "#c8d3f5" }
+    hl.BlinkCmpSignatureHelpBorder = { fg = "#545c7e", bg = "#000000", bold = true }
   end,
 })
 vim.cmd.colorscheme("tokyonight-moon")

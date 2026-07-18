@@ -38,7 +38,7 @@ return {
           window = {
             max_width = 60,
             max_height = 12, -- caps height so it can't eat the whole screen
-            border = "rounded", -- no padding/border = less wasted space
+            -- border = "rounded", -- no padding/border = less wasted space
             winhighlight = "Normal:BlinkCmpDoc,FloatBorder:BlinkCmpDocBorder",
             direction_priority = {
               menu_north = { "n", "s" },
@@ -49,7 +49,7 @@ return {
 
         menu = {
           max_height = 8, -- height of items to display
-          border = "rounded",
+          -- border = "rounded",
           winhighlight = "Normal:BlinkCmpMenu,FloatBorder:BlinkCmpMenuBorder,CursorLine:BlinkCmpMenuSelection,Search:None",
           draw = {
             columns = { { "kind_icon" }, { "label", gap = 1 } }, -- drop label_description
