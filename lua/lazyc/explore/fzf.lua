@@ -24,19 +24,7 @@ local function setup_fzf()
     fzf_opts = {
       ["--wrap"] = true,
     },
-    fzf_colors = {
-      ["fg"] = { "fg", "Normal" },
-      ["bg"] = { "bg", "Normal" },
-      ["fg+"] = { "fg", "Normal" },
-      ["bg+"] = { "bg", "Visual" },
-      ["hl"] = { "fg", "Identifier" },
-      ["hl+"] = { "fg", "Statement" },
-      ["prompt"] = { "fg", "Keyword" },
-      ["pointer"] = { "fg", "Type" },
-      ["marker"] = { "fg", "Type" },
-      ["header"] = { "fg", "Title" },
-      ["info"] = { "fg", "Special" },
-    },
+    fzf_colors = true,
     files = {
       prompt = " ",
       multiprocess = true,
