@@ -19,7 +19,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
       return nil
     end
 
-    local function scroll_hover(dir)
+    function Scroll_hover(dir) -- global (no `local`) so blink's keymap table above can reach it
       local winid = get_hover_win()
       if not winid then
         return false
@@ -31,12 +31,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end
 
     vim.keymap.set("n", "<C-f>", function()
-      if not scroll_hover("down") then
+      if not Scroll_hover("down") then
         vim.cmd("normal! \x06")
       end
     end)
     vim.keymap.set("n", "<C-b>", function()
-      if not scroll_hover("up") then
+      if not Scroll_hover("up") then
         vim.cmd("normal! \x02")
       end
     end)
