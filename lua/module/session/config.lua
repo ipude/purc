@@ -87,6 +87,9 @@ end
 -- get is EXACTLY what's in the session file — never a merge with
 -- whatever happened to already be open (i.e. always fresh, never stale).
 local function reset_editor_state()
+  for _, client in ipairs(vim.lsp.get_clients()) do
+    client.stop(true) -- force stop, don't wait for graceful shutdown
+  end
   vim.cmd("silent! tabonly")
   vim.cmd("silent! only")
   for _, buf in ipairs(vim.api.nvim_list_bufs()) do
