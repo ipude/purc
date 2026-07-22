@@ -13,6 +13,7 @@ return {
     opts = {
       keymap = {
         preset = "default",
+        ["<CR>"] = { "select_and_accept", "fallback" },
         ["<C-space>"] = { "show", "show_documentation", "hide_documentation" },
         ["<C-e>"] = { "hide", "fallback" },
         ["<C-y>"] = { "select_and_accept", "fallback" },
